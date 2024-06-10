@@ -1,0 +1,23 @@
+{
+  "name": "hyperswitch-sdk-react-native",
+  "jsx": { "version": 4 },
+  "sources": [
+    {
+      "dir": "src", // update this to wherever you're putting ReScript files
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "esmodule",
+      "in-source": true
+    }
+  ],
+  "suffix": ".res.js",
+  "bs-dependencies": [
+    "@rescript/core",
+    "rescript-react-native",
+    "@rescript/react"
+  ],
+  "bsc-flags": ["-open RescriptCore"]
+}
