@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">HyperswitchSdkReactNativeExample</string>
+    <string name="CodePushDeploymentKey">dummy</string>
+</resources>
