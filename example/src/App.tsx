@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
-import { HyperswitchSdkReactNativeView } from 'hyperswitch-sdk-react-native';
+import { HyperProvider } from 'hyperswitch-sdk-react-native';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <HyperswitchSdkReactNativeView color="#32a852" style={styles.box} />
+      <HyperProvider />
     </View>
   );
 }
