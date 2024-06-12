@@ -10,8 +10,17 @@
     "build:ios": "cd ios && xcodebuild -workspace HyperswitchSdkReactNativeExample.xcworkspace -scheme HyperswitchSdkReactNativeExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO"
   },
   "dependencies": {
+    "@sentry/react-native": "^5.9.0",
     "react": "18.2.0",
-    "react-native": "0.74.2"
+    "react-native": "0.74.2",
+    "react-native-code-push": "^8.1.0",
+    "react-native-gesture-handler": "^2.5.0",
+    "react-native-hyperswitch-kount": "^0.1.0",
+    "react-native-inappbrowser-reborn": "^3.7.0",
+    "react-native-pager-view": "^5.4.9",
+    "react-native-safe-area-context": "^3.3.0",
+    "react-native-screens": "^3.22.0",
+    "react-native-svg": "^13.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -114,12 +114,56 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation project(':react-native-code-push')
+  implementation project(':react-native-code-push')
+  implementation project(':react-native-gesture-handler')
+  implementation project(':react-native-hyperswitch-kount')
+  implementation project(':react-native-inappbrowser-reborn')
+  implementation project(':react-native-pager-view')
+  implementation project(':react-native-safe-area-context')
+  implementation project(':react-native-screens')
+  implementation project(':react-native-screens')
+  implementation project(':react-native-svg')
+  implementation project(':react-native-screens')
 }
+
+
 
 if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
     libraryName = "HyperswitchSdkReactNativeView"
     codegenJavaPackageName = "com.hyperswitchsdkreactnative"
+  }
+}
+
+//afterEvaluate {
+//  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+//    dependsOn(tasks.withType(JavaCompile))
+//  }
+//}
+
+def scriptPath2 = './codepush.gradle'
+if (file(scriptPath2).exists()) {
+  try {
+    apply from: scriptPath2
+  } catch (Exception ex) {
+    println(ex.message)
+  }
+}
+else{
+  println("does not exsits")
+}
+//println('gdfgdfgdfdfg')
+
+//def scriptPath = "../../../@react-native-community/cli-platform-android/native_modules.gradle"
+def scriptPath = "./native_modules.gradle"
+if (file(scriptPath).exists()) {
+  try {
+    println("running native modules script")
+    apply from: file(scriptPath);
+    applyNativeModulesAppBuildGradle(project)
+  } catch (Exception ex) {
+    println(ex.message)
   }
 }
