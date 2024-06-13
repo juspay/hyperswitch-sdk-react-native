@@ -147,7 +147,7 @@ class Utils {
       if(reactNativeFragmentSheet != null) {
         context.supportFragmentManager
           .beginTransaction()
-          .setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+//          .setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom)
           .hide(reactNativeFragmentSheet!!)
           .commit()
       }

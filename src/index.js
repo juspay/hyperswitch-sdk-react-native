@@ -1,6 +1,4 @@
-// export { default as HyperswitchSdkReactNativeView } from './HyperswitchSdkReactNativeViewNativeComponent';
-// export * from './HyperswitchSdkReactNativeViewNativeComponent';
-export { HyperProvider } from './AppExports.res';
-import { presentPaymentSheet } from './nativeModules/HyperNativeModules.res';
-export { presentPaymentSheet } from './nativeModules/HyperNativeModules.res';
-export * from './AppExports.res';
+import * as HyperProviderExports from './context/HyperProvider.res';
+var HyperProvider = HyperProviderExports.make;
+export { HyperProvider };
+export { useHyper } from './hooks/HyperHooks.res';

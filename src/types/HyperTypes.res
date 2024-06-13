@@ -1,4 +1,11 @@
-////////////////----open RN Code----//////////////////
+type responseFromNativeModule = {
+  type_: string,
+  code: string,
+  message: string,
+  status: string,
+}
+@scope("JSON") external parseResponse: Js.Dict.t<Js.Json.t> => responseFromNativeModule = "parse"
+
 type customer = {
   id: option<string>,
   ephemeralKeySecret: option<string>,
@@ -55,23 +62,14 @@ type configurationType = {
   customer?: customer,
 }
 type sendingToOrca = {
-  configuration: option<configurationType>,
+  configuration?: option<configurationType>,
   publishableKey: string,
   clientSecret: string,
   \"type": string,
   from: string,
-  branding: option<string>,
-  locale: option<string>,
+  branding?: string,
+  locale?: string,
 }
-
-type responseFromOrca = {
-  type_: string,
-  code: string,
-  message: string,
-  status: string,
-}
-
-@scope("JSON") external parseResponse: Js.Dict.t<Js.Json.t> => responseFromOrca = "parse"
 
 external parser: sendingToOrca => Js.Json.t = "%identity"
 type paymentSheetTheme = [
@@ -100,15 +98,14 @@ type hyperProviderTypes = {
   // customerEphemeralKeySecret: customerEphemeralKeySecret,
 }
 type initPaymentSheetParamTypes = {
-  paymentIntentClientSecret: string,
+  clientSecret: string,
   merchantDisplayName: string,
   customerId: option<string>,
   customerEphemeralKeySecret: option<string>,
   customFlow?: bool,
-  googlePay: option<googlePayType>,
-  applePay: option<applePayType>,
   style?: paymentSheetTheme,
   returnURL?: string,
+  configuration: configurationType,
   // billingDetailsCollectionConfiguration?: BillingDetailsCollectionConfiguration,
   //defaultBillingDetails?: BillingDetails,
   //defaultShippingDetails?: AddressDetails,
@@ -118,48 +115,3 @@ type initPaymentSheetParamTypes = {
   branding?: string,
   locale?: string,
 }
-let setData = (~providerState: hyperProviderTypes, ~initState: initPaymentSheetParamTypes) => {
-  let themes = switch initState.style {
-  | Some(style) =>
-    switch style {
-    | #Automatic => ""
-    | #AlwaysLight => "Light"
-    | #AlwaysDark => "Dark"
-    | #FlatMinimal => "FlatMinimal"
-    | #Minimal => "Minimal"
-    }
-  | None => ""
-  }
-
-  let appearance = initState.appearance->Belt.Option.getWithDefault({})
-  {
-    configuration: Some({
-      appearance: {...appearance, themes},
-      googlePay: ?initState.googlePay,
-      customer: {
-        id: initState.customerId,
-        ephemeralKeySecret: initState.customerEphemeralKeySecret,
-      },
-    }),
-    publishableKey: providerState.publishableKey,
-    clientSecret: initState.paymentIntentClientSecret,
-    \"type": "payment",
-    from: "rn",
-    branding: initState.branding,
-    locale: initState.locale,
-  }->parser
-}
-
-// let failedPaymentSheetRes: responseFromOrca => FunctionTypes.presentPaymentSheetReturnType = error => {
-//   error: {
-//     code: error.code == "" ? error.status : error.code,
-//     message: error.message == "" ? error.status : error.message,
-//   },
-// }
-
-// let successPaymentSheetRes: responseFromOrca => FunctionTypes.presentPaymentSheetReturnType = val => {
-//   paymentOption: {
-//     label: val.status,
-//     image: val.status,
-//   },
-// }

@@ -25,6 +25,11 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     Log.i("Bundle Obj",bundleObj.toString());
     Utils.openReactView(currentActivity as ReactActivity, toBundleObject(request), "payment", null)
   }
+    @ReactMethod
+  fun exitPaymentsheet(rootTag: Int, paymentResult: String, reset: Boolean) {
+    Utils.hideFragment(currentActivity as ReactActivity, reset)
+    sheetCallback.invoke(paymentResult)
+  }
 
   @ReactMethod
   fun sendMessageToNative(rnMessage: String?) {
