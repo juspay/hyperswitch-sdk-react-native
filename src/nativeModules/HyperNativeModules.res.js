@@ -7,9 +7,9 @@ import * as ReactNative from "react-native";
 
 var hyperswitchDict = Belt_Option.getWithDefault(Belt_Option.flatMap(Js_dict.get(ReactNative.NativeModules, "HyperModule"), Js_json.decodeObject), {});
 
-console.log("hyperswitch dict------>", hyperswitchDict);
+console.log("hyperswitch dict------>", Js_dict.get(ReactNative.NativeModules, "HyperHeadless"));
 
-function getStrFunWithCallbackFromKey(key) {
+function getJsonFunWithCallbackFromKey(key) {
   var json = Js_dict.get(hyperswitchDict, key);
   if (json !== undefined) {
     return json;
@@ -20,19 +20,49 @@ function getStrFunWithCallbackFromKey(key) {
   }
 }
 
+function getStrFunWithCallbackFromKey(key) {
+  var json = hyperswitchDict[key];
+  if (json !== undefined) {
+    return json;
+  } else {
+    return function (param, param$1) {
+      
+    };
+  }
+}
+
+var hyperswitch_presentPaymentSheet = getJsonFunWithCallbackFromKey("presentPaymentSheet");
+
+var hyperswitch_initHeadless = getJsonFunWithCallbackFromKey("initHeadless");
+
+var hyperswitch_getCustomerSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerSavedPaymentMethodData");
+
 var hyperswitch = {
-  presentPaymentSheet: getStrFunWithCallbackFromKey("presentPaymentSheet")
+  presentPaymentSheet: hyperswitch_presentPaymentSheet,
+  initHeadless: hyperswitch_initHeadless,
+  getCustomerSavedPaymentMethodData: hyperswitch_getCustomerSavedPaymentMethodData
 };
 
 function presentPaymentSheet(requestObj, callback) {
   console.log("reaching here------", requestObj);
-  hyperswitch.presentPaymentSheet(requestObj, callback);
+  hyperswitch_presentPaymentSheet(requestObj, callback);
+}
+
+function initHeadless(requestObj, callback) {
+  hyperswitch_initHeadless(requestObj, callback);
+}
+
+function getCustomerSavedPaymentMethodData(requestObj, callback) {
+  hyperswitch_getCustomerSavedPaymentMethodData(requestObj, callback);
 }
 
 export {
   hyperswitchDict ,
+  getJsonFunWithCallbackFromKey ,
   getStrFunWithCallbackFromKey ,
   hyperswitch ,
   presentPaymentSheet ,
+  initHeadless ,
+  getCustomerSavedPaymentMethodData ,
 }
 /* hyperswitchDict Not a pure module */

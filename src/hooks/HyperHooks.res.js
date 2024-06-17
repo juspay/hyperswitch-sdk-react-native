@@ -38,13 +38,26 @@ function useHyper() {
                     HyperNativeModules.presentPaymentSheet(paySheetParams, responseResolve);
                   }));
     };
+    var initHeadless = function (paySheetParams) {
+      console.log("called at RN");
+      HyperNativeModules.initHeadless(paySheetParams, (function (obj) {
+              console.log("headless ok!!!!!", obj);
+            }));
+    };
     var paymentMethodParams = function () {
       console.log("hello world");
+    };
+    var getCustomerSavedPaymentMethodData = function (paySheetParams) {
+      HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParams, (function (obj) {
+              console.log("getCustomer", obj);
+            }));
     };
     return {
             initPaymentSheet: initPaymentSheet,
             presentPaymentSheet: presentPaymentSheet,
-            paymentMethodParams: paymentMethodParams
+            paymentMethodParams: paymentMethodParams,
+            initHeadless: initHeadless,
+            getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData
           };
   };
 }

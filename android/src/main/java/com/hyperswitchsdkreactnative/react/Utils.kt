@@ -28,6 +28,8 @@ class Utils {
       id: Int?
     ) {
 
+//      reactInstanceManager!!.createReactContextInBackground()
+
       context.runOnUiThread {
 
           val transaction = context.supportFragmentManager.beginTransaction()

@@ -10,7 +10,10 @@
     "build:ios": "cd ios && xcodebuild -workspace HyperswitchSdkReactNativeExample.xcworkspace -scheme HyperswitchSdkReactNativeExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO"
   },
   "dependencies": {
+    "@juspay-tech/hyperswitch-node": "^1.0.3",
     "@sentry/react-native": "^5.9.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "react": "18.2.0",
     "react-native": "0.74.2",
     "react-native-code-push": "^8.1.0",

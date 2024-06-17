@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, View, Button, Text } from 'react-native';
 import { presentPaymentSheet, useHyper } from 'hyperswitch-sdk-react-native';
+import HeadlessExampleComponent from './HeadlessExampleComponent';
 
 export default function PaymentScreen() {
   const { initPaymentSheet, presentPaymentSheet } = useHyper()();
@@ -95,21 +96,22 @@ export default function PaymentScreen() {
     const stringifiedResponse = JSON.stringify(res);
     setResponse(stringifiedResponse);
   };
-  let test = async () => {
+  let openPaymentSheet = async () => {
     await initializePaymentSheet();
-    // await presentPaymentSheet();
   };
 
-  React.useEffect(() => {
-    test();
-  }, []);
+  // React.useEffect(() => {
+  //   test();
+  // }, []);
 
   return (
     <View style={styles.container}>
-      <Button title="Open PaymentSheet" onPress={initializePaymentSheet} />
+      <Text style={{ fontSize: 20 }}>Payment Sheet</Text>
+      <Button title="Open PaymentSheet" onPress={openPaymentSheet} />
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>
         {response}
       </Text>
+      <HeadlessExampleComponent />
     </View>
   );
 }

@@ -3,6 +3,8 @@ type useHyperReturnType = {
   initPaymentSheet: HyperTypes.initPaymentSheetParamTypes => HyperTypes.sendingToOrca,
   presentPaymentSheet: HyperTypes.sendingToOrca => promise<HyperTypes.responseFromNativeModule>,
   paymentMethodParams: unit => unit,
+  initHeadless: HyperTypes.sendingToOrca => unit,
+  getCustomerSavedPaymentMethodData: HyperTypes.sendingToOrca => unit,
 }
 
 let useHyper = () => {
@@ -46,9 +48,30 @@ let useHyper = () => {
         HyperNativeModules.presentPaymentSheet(paySheetParamsJson, responseResolve)
       })
     }
+
+    let initHeadless = (paySheetParams: HyperTypes.sendingToOrca) => {
+      let paySheetParamsJson = paySheetParams->parser
+      Console.log("called at RN")
+      HyperNativeModules.initHeadless(paySheetParamsJson, obj => {
+        Console.log2("headless ok!!!!!", obj)
+      })
+    }
     let paymentMethodParams = () => {
       Console.log("hello world")
     }
-    {initPaymentSheet, presentPaymentSheet, paymentMethodParams}
+
+    let getCustomerSavedPaymentMethodData = (paySheetParams: HyperTypes.sendingToOrca) => {
+      let paySheetParamsJson = paySheetParams->parser
+      HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParamsJson, obj => {
+        Console.log2("getCustomer", obj)
+      })
+    }
+    {
+      initPaymentSheet,
+      presentPaymentSheet,
+      paymentMethodParams,
+      initHeadless,
+      getCustomerSavedPaymentMethodData,
+    }
   }
 }

@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.ViewManager
 import com.juspaytech.reactnativehyperswitch.ReactNativeHyperswitchModule
+import io.hyperswitch.react.HyperHeadlessModule
 import java.util.ArrayList
 
 class HyperswitchSdkReactNativeViewPackage : ReactPackage {
@@ -20,6 +21,7 @@ class HyperswitchSdkReactNativeViewPackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
     val nativeModules: MutableList<NativeModule> = ArrayList()
     nativeModules.add(ReactNativeHyperswitchModule(reactContext))
+    nativeModules.add(HyperHeadlessModule(reactContext))
     return nativeModules
   }
 }
