@@ -9,7 +9,7 @@ export default function HeadlessExampleComponent() {
     presentPaymentSheet,
     initHeadless,
     getCustomerSavedPaymentMethodData,
-  } = useHyper()();
+  } = useHyper();
 
   const [response, setResponse] = React.useState('');
 

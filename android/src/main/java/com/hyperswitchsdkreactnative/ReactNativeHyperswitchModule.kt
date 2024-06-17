@@ -60,23 +60,23 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
 
       Companion.paymentSession = paymentSession
 
-      paymentSession.getCustomerSavedPaymentMethods {
-        val x = it.getCustomerSavedPaymentMethodData()
-        Log.i("customer saved data", x.toString())
-      }
-
-      fun completionFunction(
-        getCustomerDefaultSavedPaymentMethodData: () -> Any?,
-        confirmWithCustomerDefaultPaymentMethod: ((PaymentResult) -> Unit) -> Unit
-      ) {
-        // Call the provided functions
-        val paymentMethodData = getCustomerDefaultSavedPaymentMethodData()
-        println("Payment Method Data: $paymentMethodData")
-        fun finalCallback(paymentResult: PaymentResult) {
-          Log.i("paymentResult", paymentResult.toString())
-        }
-        confirmWithCustomerDefaultPaymentMethod(::finalCallback)
-      }
+//      paymentSession.getCustomerSavedPaymentMethods {
+//        val x = it.getCustomerSavedPaymentMethodData()
+//        Log.i("customer saved data", x.toString())
+//      }
+//
+//      fun completionFunction(
+//        getCustomerDefaultSavedPaymentMethodData: () -> Any?,
+//        confirmWithCustomerDefaultPaymentMethod: ((PaymentResult) -> Unit) -> Unit
+//      ) {
+//        // Call the provided functions
+//        val paymentMethodData = getCustomerDefaultSavedPaymentMethodData()
+//        println("Payment Method Data: $paymentMethodData")
+//        fun finalCallback(paymentResult: PaymentResult) {
+//          Log.i("paymentResult", paymentResult.toString())
+//        }
+//        confirmWithCustomerDefaultPaymentMethod(::finalCallback)
+//      }
 
 
       // Initialize the saved payment method session

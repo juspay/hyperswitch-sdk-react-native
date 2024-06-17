@@ -5,7 +5,7 @@ import { presentPaymentSheet, useHyper } from 'hyperswitch-sdk-react-native';
 import HeadlessExampleComponent from './HeadlessExampleComponent';
 
 export default function PaymentScreen() {
-  const { initPaymentSheet, presentPaymentSheet } = useHyper()();
+  const { initPaymentSheet, presentPaymentSheet } = useHyper();
 
   const [response, setResponse] = React.useState('');
 
