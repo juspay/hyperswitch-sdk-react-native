@@ -1,10 +1,49 @@
+type savedPaymentMethodType = {
+  paymentMethodType: string,
+  isDefaultPaymentMethod: bool,
+  paymentToken: string,
+  cardScheme: string,
+  name: string,
+  expiryDate: string,
+  cardNumber: string,
+  nickName: string,
+  cardHolderName: string,
+  requiresCVV: bool,
+  created: string,
+  lastUsedAt: string,
+  walletType?: string,
+}
+
 type responseFromNativeModule = {
   type_: string,
   code: string,
   message: string,
   status: string,
 }
-@scope("JSON") external parseResponse: Js.Dict.t<Js.Json.t> => responseFromNativeModule = "parse"
+
+type headlessConfirmResponseType = {
+  message: string,
+  type_: string,
+}
+@scope("JSON")
+external parseResponseFromNativeModule: Js.Dict.t<Js.Json.t> => responseFromNativeModule = "parse"
+
+external parseConfirmResponse: Js.Dict.t<Js.Json.t> => headlessConfirmResponseType = "%identity"
+
+external parseJson: Js.Dict.t<Js.Json.t> => JSON.t = "%identity"
+
+// external cardDictToObj: Js.Dict.t<Js.Json.t> => savedCard = "%identity"
+external savedPMToObj: Js.Dict.t<Js.Json.t> => savedPaymentMethodType = "%identity"
+
+let paymentMethodItemToObjMapper = pmItem => {
+  let val = pmItem->parseJson
+  let pmDict = val->JSON.Decode.object->Option.getOr(Dict.make())
+  let pMType =
+    pmDict->Dict.get("paymentMethodType")->Option.getExn->JSON.Decode.string->Option.getOr("")
+
+  let pmObj = {...pmDict->savedPMToObj, paymentMethodType: pMType}
+  pmObj
+}
 
 type customerConfiguration = {
   id: option<string>,

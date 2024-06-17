@@ -21,7 +21,7 @@ class HyperHeadlessModule internal constructor(private val rct: ReactApplication
       // Create a map to store payment session details
       val map = Arguments.createMap()
       // Add publishable key to the map
-      map.putString("publishableKey", ReactNativeHyperswitchModule.Companion.publishableKey)
+      map.putString("publishableKey", PaymentSession.Companion.publishableKey)
       // Add client secret to the map
       map.putString("clientSecret", PaymentSession.Companion.paymentIntentClientSecret)
       // Add hyper parameters to the map
@@ -35,7 +35,7 @@ class HyperHeadlessModule internal constructor(private val rct: ReactApplication
   @ReactMethod
   fun getPaymentSession(
     getPaymentMethodData: ReadableMap,
-    getPaymentMethodData2:ReadableMap,
+//    getPaymentMethodData2:ReadableMap,
     getPaymentMethodDataArray: ReadableArray,
     callback: Callback
   ) {
@@ -43,7 +43,7 @@ class HyperHeadlessModule internal constructor(private val rct: ReactApplication
     println("getPaymentMethodDataArray"+getPaymentMethodDataArray)
     // Call the getPaymentSession method from PaymentSession singleton
 //    PaymentSession.sharedInstance?.getPaymentSession(getPaymentMethodData, callback)
-    PaymentSession.getPaymentSession(getPaymentMethodData, getPaymentMethodData2, getPaymentMethodDataArray, callback)
+    PaymentSession.getPaymentSession(getPaymentMethodData,  getPaymentMethodDataArray, callback)
   }
 
   // Method to exit the headless mode

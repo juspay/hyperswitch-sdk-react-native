@@ -9,6 +9,7 @@ export default function HeadlessExampleComponent() {
     presentPaymentSheet,
     initHeadless,
     getCustomerSavedPaymentMethodData,
+    confirmWithCustomerDefaultPaymentMethod,
   } = useHyper();
 
   const [response, setResponse] = React.useState('');
@@ -58,13 +59,30 @@ export default function HeadlessExampleComponent() {
     initHeadless(params);
   };
 
-  let getSavedPaymentMethods = async () => {
+  let confirmWithDefault = async () => {
+    const { clientSecret, customerId, ephemeralKey } =
+      await fetchPaymentParams();
     console.log('called!!!!!!!!!!!!!!!!');
     let params = {
-      clientSecret: '',
+      clientSecret: clientSecret,
     };
 
-    getCustomerSavedPaymentMethodData(params);
+    // getCustomerSavedPaymentMethodData(params);
+    const resp = await confirmWithCustomerDefaultPaymentMethod(params);
+    console.log('Headless example component--------', resp.message);
+  };
+
+  let getDefaultCustomerPaymentMethod = async () => {
+    const { clientSecret, customerId, ephemeralKey } =
+      await fetchPaymentParams();
+    console.log('called!!!!!!!!!!!!!!!!');
+    let params = {
+      clientSecret: clientSecret,
+    };
+
+    const pmObj = await getCustomerSavedPaymentMethodData(params);
+    // const resp = await confirmWithCustomerDefaultPaymentMethod(params);
+    console.log('Headless example component--------', pmObj);
   };
 
   // React.useEffect(() => {
@@ -77,7 +95,12 @@ export default function HeadlessExampleComponent() {
         <Text style={{ fontSize: 20 }}>Headless Mode</Text>
         <Button title="Initialize Headless" onPress={initialiseHeadless} />
         <View style={{ marginTop: 10 }} />
-        <Button title="Confirm Payment" onPress={getSavedPaymentMethods} />
+        <Button
+          title="Get Customer Default Payment Method"
+          onPress={getDefaultCustomerPaymentMethod}
+        />
+        <View style={{ marginTop: 10 }} />
+        <Button title="Confirm Payment" onPress={confirmWithDefault} />
       </View>
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>
         {response}

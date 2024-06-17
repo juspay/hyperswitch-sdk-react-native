@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory
 import com.facebook.react.HyperPackageList
+import com.facebook.react.ReactActivity
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactRootView
@@ -19,12 +20,13 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.common.LifecycleState
 import com.hyperswitchsdkreactnative.react.Utils
+import com.juspaytech.reactnativehyperswitch.ReactNativeHyperswitchModule
 import com.microsoft.codepush.react.CodePush
 import io.hyperswitch.payments.paymentlauncher.PaymentResult
 
 
 class PaymentSession {
-//  private var paymentSheet: PaymentSheet? = null
+  //  private var paymentSheet: PaymentSheet? = null
 //  private var sheetCompletion: ((PaymentSheetResult) -> Unit)? = null
   private var reactInstanceManager: ReactInstanceManager? = null
   private var illegalState: IllegalStateException? = null
@@ -70,7 +72,7 @@ class PaymentSession {
         val application = activity.application as ReactApplication
 //        reactInstanceManager = application.reactNativeHost.reactInstanceManager
         val packages = HyperPackageList(activity?.application, activity.baseContext).packages
-        reactInstanceManager= ReactInstanceManager.builder()
+        reactInstanceManager = ReactInstanceManager.builder()
           .setApplication(activity?.application)
           .setCurrentActivity(activity)
           .addPackages(packages)
@@ -84,7 +86,7 @@ class PaymentSession {
           .build()
 
         val mReactRootView = ReactRootView(activity)
-        mReactRootView.startReactApplication(reactInstanceManager,"")
+        mReactRootView.startReactApplication(reactInstanceManager, "")
       } catch (ex: RuntimeException) {
         throw RuntimeException(
           "Please remove \"android:name\" from application tag in AndroidManifest.xml", ex
@@ -125,9 +127,18 @@ class PaymentSession {
   }
 
   fun initPaymentSession(
-    paymentIntentClientSecret: String
+    paymentIntentClientSecret: String,
+    currentActivity: ReactActivity,
+    request: Bundle
+
   ) {
+    Utils.openReactView(
+      currentActivity,
+      request,
+      "payment", null, isHidden = true
+    )
     Companion.paymentIntentClientSecret = paymentIntentClientSecret
+    Companion.publishableKey=request.getString("publishableKey")
   }
 
 //  fun presentPaymentSheet(resultCallback: (PaymentSheetResult) -> Unit) {
@@ -181,12 +192,13 @@ class PaymentSession {
     private lateinit var activity: Activity
 
     var paymentIntentClientSecret: String? = null
+    var publishableKey:String?=null
     var completion: ((PaymentSessionHandler) -> Unit)? = null
     var headlessCompletion: ((PaymentResult) -> Unit)? = null
 
     fun getPaymentSession(
       getPaymentMethodData: ReadableMap,
-      getPaymentMethodData2: ReadableMap,
+
       getPaymentMethodDataArray: ReadableArray,
       callback: Callback
     ) {
@@ -195,9 +207,9 @@ class PaymentSession {
           return parseGetPaymentMethodData(getPaymentMethodData)
         }
 
-        override fun getCustomerLastUsedPaymentMethodData(): PaymentMethod {
-          return parseGetPaymentMethodData(getPaymentMethodData2)
-        }
+//        override fun getCustomerLastUsedPaymentMethodData(): PaymentMethod {
+//          return parseGetPaymentMethodData(getPaymentMethodData2)
+//        }
 
         override fun getCustomerSavedPaymentMethodData(): Array<PaymentMethod> {
           val array = mutableListOf<PaymentMethod>()
@@ -214,12 +226,13 @@ class PaymentSession {
             ?.let { confirmWithCustomerPaymentToken(it, cvc, resultHandler) }
         }
 
-        override fun confirmWithCustomerLastUsedPaymentMethod(
-          cvc: String?, resultHandler: (PaymentResult) -> Unit
-        ) {
-          getPaymentMethodData2.getMap("_0")?.getString("payment_token")
-            ?.let { confirmWithCustomerPaymentToken(it, cvc, resultHandler) }
-        }
+
+//        override fun confirmWithCustomerLastUsedPaymentMethod(
+//          cvc: String?, resultHandler: (PaymentResult) -> Unit
+//        ) {
+//          getPaymentMethodData2.getMap("_0")?.getString("payment_token")
+//            ?.let { confirmWithCustomerPaymentToken(it, cvc, resultHandler) }
+//        }
 
         override fun confirmWithCustomerPaymentToken(
           paymentToken: String, cvc: String?, resultHandler: (PaymentResult) -> Unit
@@ -387,15 +400,16 @@ sealed class PaymentMethod {
 
 interface PaymentSessionHandler {
   fun getCustomerDefaultSavedPaymentMethodData(): PaymentMethod
-  fun getCustomerLastUsedPaymentMethodData(): PaymentMethod
+
+  //  fun getCustomerLastUsedPaymentMethodData(): PaymentMethod
   fun getCustomerSavedPaymentMethodData(): Array<PaymentMethod>
   fun confirmWithCustomerDefaultPaymentMethod(
     cvc: String? = null, resultHandler: (PaymentResult) -> Unit
   )
 
-  fun confirmWithCustomerLastUsedPaymentMethod(
-    cvc: String? = null, resultHandler: (PaymentResult) -> Unit
-  )
+//  fun confirmWithCustomerLastUsedPaymentMethod(
+//    cvc: String? = null, resultHandler: (PaymentResult) -> Unit
+//  )
 
   fun confirmWithCustomerPaymentToken(
     paymentToken: String, cvc: String? = null, resultHandler: (PaymentResult) -> Unit

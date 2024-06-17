@@ -7,7 +7,7 @@ import * as ReactNative from "react-native";
 
 var hyperswitchDict = Belt_Option.getWithDefault(Belt_Option.flatMap(Js_dict.get(ReactNative.NativeModules, "HyperModule"), Js_json.decodeObject), {});
 
-console.log("hyperswitch dict------>", Js_dict.get(ReactNative.NativeModules, "HyperHeadless"));
+console.log("hyperswitch dict------>", hyperswitchDict);
 
 function getJsonFunWithCallbackFromKey(key) {
   var json = Js_dict.get(hyperswitchDict, key);
@@ -37,10 +37,13 @@ var hyperswitch_initHeadless = getJsonFunWithCallbackFromKey("initHeadless");
 
 var hyperswitch_getCustomerSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerSavedPaymentMethodData");
 
+var hyperswitch_confirmWithCustomerDefaultPaymentMethod = getJsonFunWithCallbackFromKey("confirmWithCustomerDefaultPaymentMethod");
+
 var hyperswitch = {
   presentPaymentSheet: hyperswitch_presentPaymentSheet,
   initHeadless: hyperswitch_initHeadless,
-  getCustomerSavedPaymentMethodData: hyperswitch_getCustomerSavedPaymentMethodData
+  getCustomerSavedPaymentMethodData: hyperswitch_getCustomerSavedPaymentMethodData,
+  confirmWithCustomerDefaultPaymentMethod: hyperswitch_confirmWithCustomerDefaultPaymentMethod
 };
 
 function presentPaymentSheet(requestObj, callback) {
@@ -56,6 +59,10 @@ function getCustomerSavedPaymentMethodData(requestObj, callback) {
   hyperswitch_getCustomerSavedPaymentMethodData(requestObj, callback);
 }
 
+function confirmWithCustomerDefaultPaymentMethod(requestObj, callback) {
+  hyperswitch_confirmWithCustomerDefaultPaymentMethod(requestObj, callback);
+}
+
 export {
   hyperswitchDict ,
   getJsonFunWithCallbackFromKey ,
@@ -64,5 +71,6 @@ export {
   presentPaymentSheet ,
   initHeadless ,
   getCustomerSavedPaymentMethodData ,
+  confirmWithCustomerDefaultPaymentMethod ,
 }
 /* hyperswitchDict Not a pure module */

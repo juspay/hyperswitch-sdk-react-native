@@ -28,8 +28,16 @@ function useHyper() {
                 }));
   };
   var initHeadless = function (paySheetParams) {
-    console.log("called at RN");
-    HyperNativeModules.initHeadless(paySheetParams, (function (obj) {
+    var paymentSheetParams_publishableKey = hyperVal.publishableKey;
+    var paymentSheetParams_clientSecret = paySheetParams.clientSecret;
+    var paymentSheetParams = {
+      publishableKey: paymentSheetParams_publishableKey,
+      clientSecret: paymentSheetParams_clientSecret,
+      type: "payment",
+      from: "rn"
+    };
+    console.log("called at RN", paymentSheetParams);
+    HyperNativeModules.initHeadless(paymentSheetParams, (function (obj) {
             console.log("headless ok!!!!!", obj);
           }));
   };
@@ -37,16 +45,48 @@ function useHyper() {
     console.log("hello world");
   };
   var getCustomerSavedPaymentMethodData = function (paySheetParams) {
-    HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParams, (function (obj) {
-            console.log("getCustomer", obj);
-          }));
+    console.log("params test", paySheetParams);
+    var paymentSheetParams_publishableKey = hyperVal.publishableKey;
+    var paymentSheetParams_clientSecret = paySheetParams.clientSecret;
+    var paymentSheetParams = {
+      publishableKey: paymentSheetParams_publishableKey,
+      clientSecret: paymentSheetParams_clientSecret,
+      type: "payment",
+      from: "rn"
+    };
+    return new Promise((function (resolve, param) {
+                  var responseResolve = function (arg) {
+                    console.log("inside promise========", arg);
+                    resolve(arg);
+                  };
+                  HyperNativeModules.getCustomerSavedPaymentMethodData(paymentSheetParams, responseResolve);
+                }));
+  };
+  var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams) {
+    console.log("params test", paySheetParams);
+    var paymentSheetParams_publishableKey = hyperVal.publishableKey;
+    var paymentSheetParams_clientSecret = paySheetParams.clientSecret;
+    var paymentSheetParams = {
+      publishableKey: paymentSheetParams_publishableKey,
+      clientSecret: paymentSheetParams_clientSecret,
+      type: "payment",
+      from: "rn"
+    };
+    return new Promise((function (resolve, param) {
+                  var responseResolve = function (arg) {
+                    console.log("inside promise========", arg);
+                    resolve(arg);
+                  };
+                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paymentSheetParams, responseResolve);
+                }));
   };
   return {
           initPaymentSheet: initPaymentSheet,
           presentPaymentSheet: presentPaymentSheet,
           paymentMethodParams: paymentMethodParams,
           initHeadless: initHeadless,
-          getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData
+          getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData,
+          confirmWithCustomerDefaultPaymentMethod: confirmWithCustomerDefaultPaymentMethod
         };
 }
 

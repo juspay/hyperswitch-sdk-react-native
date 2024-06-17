@@ -8,15 +8,13 @@ let hyperswitchDict =
   ->Belt.Option.flatMap(Js.Json.decodeObject)
   ->Belt.Option.getWithDefault(Js.Dict.empty())
 
-Console.log2(
-  "hyperswitch dict------>",
-  Js.Dict.get(ReactNative.NativeModules.nativeModules, "HyperHeadless"),
-)
+Console.log2("hyperswitch dict------>", hyperswitchDict)
 
 type hyperswitch = {
   presentPaymentSheet: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   initHeadless: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
+  confirmWithCustomerDefaultPaymentMethod: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
 }
 
 let getJsonFunWithCallbackFromKey = key => {
@@ -44,11 +42,15 @@ let hyperswitch = {
     getCustomerSavedPaymentMethodData: getJsonFunWithCallbackFromKey(
       "getCustomerSavedPaymentMethodData",
     ),
+    confirmWithCustomerDefaultPaymentMethod: getJsonFunWithCallbackFromKey(
+      "confirmWithCustomerDefaultPaymentMethod",
+    ),
   }
 }
 
 let presentPaymentSheet = (requestObj: Js.Json.t, callback) => {
   Console.log2("reaching here------", requestObj)
+  // Console.log2("present fn==", hyperswitch.presentPaymentSheet)
   hyperswitch.presentPaymentSheet(requestObj, callback)
 }
 
@@ -58,4 +60,8 @@ let initHeadless = (requestObj: Js.Json.t, callback) => {
 
 let getCustomerSavedPaymentMethodData = (requestObj: Js.Json.t, callback) => {
   hyperswitch.getCustomerSavedPaymentMethodData(requestObj, callback)
+}
+
+let confirmWithCustomerDefaultPaymentMethod = (requestObj: Js.Json.t, callback) => {
+  hyperswitch.confirmWithCustomerDefaultPaymentMethod(requestObj, callback)
 }

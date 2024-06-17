@@ -6,6 +6,7 @@ import android.util.Log
 import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
 import com.hyperswitchsdkreactnative.react.Utils
+import io.hyperswitch.PaymentMethod
 
 import io.hyperswitch.PaymentSession
 
@@ -32,55 +33,171 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun getCustomerSavedPaymentMethodData(request: ReadableMap, callBack: Callback) {
-    println("getCustomerSavedPaymentMethodData called!!!!!!")
-    Companion.paymentSession.getCustomerSavedPaymentMethods {
-      val x = it.getCustomerSavedPaymentMethodData()
-      Log.i("customer saved data", x.toString())
-    }
+    sheetCallback = callBack
+    println("getCustomerSavedPaymentMethodData called!!!!!!" + request)
 
-
-  }
-
-  @ReactMethod
-  fun initHeadless(request: ReadableMap, callBack: Callback) {
-
-    println("requestObj-----" + request)
-    Companion.publishableKey = "pk_snd_3b33cd9404234113804aa1accaabe22f"
-
-    println("headless init--->" + request)
-
-    reactApplicationContext.currentActivity!!.runOnUiThread {
+    val callBackMap = Arguments.createMap()
+    reactApplicationContext.currentActivity?.runOnUiThread {
+      println("breakpoint--" + request.getString("clientSecret"))
       val paymentSession = PaymentSession(
         reactApplicationContext.currentActivity!!,
         request.getString("clientSecret")!!
       )
 
-      paymentSession.initPaymentSession(request.getString("clientSecret")!!)
+
+      paymentSession.initPaymentSession(
+        request.getString("clientSecret")!!,
+        currentActivity as ReactActivity,
+        Companion.toBundleObject(request)
+      )
 
 
       Companion.paymentSession = paymentSession
 
-//      paymentSession.getCustomerSavedPaymentMethods {
-//        val x = it.getCustomerSavedPaymentMethodData()
-//        Log.i("customer saved data", x.toString())
-//      }
-//
-//      fun completionFunction(
-//        getCustomerDefaultSavedPaymentMethodData: () -> Any?,
-//        confirmWithCustomerDefaultPaymentMethod: ((PaymentResult) -> Unit) -> Unit
-//      ) {
-//        // Call the provided functions
-//        val paymentMethodData = getCustomerDefaultSavedPaymentMethodData()
-//        println("Payment Method Data: $paymentMethodData")
-//        fun finalCallback(paymentResult: PaymentResult) {
-//          Log.i("paymentResult", paymentResult.toString())
-//        }
-//        confirmWithCustomerDefaultPaymentMethod(::finalCallback)
-//      }
+      paymentSession.getCustomerSavedPaymentMethods {
+        val defaultPaymentMethod = it.getCustomerDefaultSavedPaymentMethodData()
 
 
-      // Initialize the saved payment method session
-//      paymentSession.initSavedPaymentMethodSession(::completionFunction)
+        when (defaultPaymentMethod) {
+          is PaymentMethod.Card -> {
+            println(defaultPaymentMethod.toHashMap())
+
+            callBackMap.putString("paymentMethodType","Card")
+            callBackMap.putMap(
+              "data",
+             Arguments.makeNativeMap( defaultPaymentMethod.toHashMap())
+            )
+          }
+
+          is PaymentMethod.Wallet -> {
+            println(defaultPaymentMethod.toHashMap())
+            callBackMap.putString("paymentMethodType","Wallet")
+            callBackMap.putString(
+              "defaultPaymentMethod",
+              defaultPaymentMethod.toHashMap().toString()
+            )
+          }
+
+          is PaymentMethod.Error -> {
+            println(defaultPaymentMethod.toHashMap())
+            callBackMap.putString(
+              "defaultPaymentMethod",
+              defaultPaymentMethod.toHashMap().toString()
+            )
+          }
+
+
+        }
+
+        callBack.invoke(callBackMap)
+
+
+
+        Log.i("customer saved data", defaultPaymentMethod.toString())
+      }
+    }
+  }
+
+  @ReactMethod
+  fun confirmWithCustomerDefaultPaymentMethod(request: ReadableMap, callBack: Callback) {
+//    sheetCallback = callBack
+    println("getCustomerSavedPaymentMethodData called!!!!!!" + request)
+
+
+    reactApplicationContext.currentActivity?.runOnUiThread {
+      val paymentSession = PaymentSession(
+        reactApplicationContext.currentActivity!!,
+        request.getString("clientSecret")!!
+      )
+
+
+      paymentSession.initPaymentSession(
+        request.getString("clientSecret")!!,
+        currentActivity as ReactActivity,
+        Companion.toBundleObject(request)
+      )
+
+      fun resultHandler(paymentResult: PaymentResult) {
+
+        val callBackMap = Arguments.createMap()
+        when (paymentResult) {
+          is PaymentResult.Canceled -> {
+            callBackMap.putString("type", "canceled")
+            callBackMap.putString("message", paymentResult.data)
+
+          }
+
+          is PaymentResult.Failed -> {
+
+            callBackMap.putString("type", "failed")
+            callBackMap.putString("message", paymentResult.throwable.message ?: "")
+          }
+
+          is PaymentResult.Completed -> {
+            callBackMap.putString("type", "completed")
+            callBackMap.putString("message", paymentResult.data)
+
+          }
+
+        }
+        callBack.invoke(callBackMap)
+      }
+      Companion.paymentSession = paymentSession
+
+      paymentSession.getCustomerSavedPaymentMethods {
+        it.confirmWithCustomerDefaultPaymentMethod(resultHandler = ::resultHandler)
+      }
+    }
+  }
+
+  @ReactMethod
+  fun initHeadless(request: ReadableMap, callBack: Callback) {
+
+    sheetCallback = callBack
+    println("requestObj-----" + request)
+    Companion.publishableKey = "pk_snd_3b33cd9404234113804aa1accaabe22f"
+
+    println("headless init--->" + request)
+
+    reactApplicationContext.currentActivity?.runOnUiThread {
+      println("breakpoint--" + request.getString("clientSecret"))
+      val paymentSession = PaymentSession(
+        reactApplicationContext.currentActivity!!,
+        request.getString("clientSecret")!!
+      )
+
+
+      paymentSession.initPaymentSession(
+        request.getString("clientSecret")!!,
+        currentActivity as ReactActivity,
+        Companion.toBundleObject(request)
+      )
+
+
+      Companion.paymentSession = paymentSession
+
+      paymentSession.getCustomerSavedPaymentMethods {
+        val x = it.getCustomerSavedPaymentMethodData()
+        val y = it.getCustomerDefaultSavedPaymentMethodData()
+
+        when (y) {
+          is PaymentMethod.Card -> {
+            println(y.toHashMap())
+          }
+
+          is PaymentMethod.Wallet -> {
+            println(y.toHashMap())
+          }
+
+          is PaymentMethod.Error -> {
+            println(y.toHashMap())
+          }
+
+
+        }
+
+        Log.i("customer saved data", x.toString())
+      }
     }
 
 
