@@ -8,7 +8,10 @@ export default function App() {
   const publishableKey = 'pk_snd_3b33cd9404234113804aa1accaabe22f';
   return (
     <View style={styles.container}>
-      <HyperProvider publishableKey={publishableKey}>
+      <HyperProvider
+        publishableKey={publishableKey}
+        // customBackendUrl="YOUR_CUSTOM_BACKEND_URL"
+      >
         <PaymentScreen />
       </HyperProvider>
     </View>

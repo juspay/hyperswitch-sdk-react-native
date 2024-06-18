@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Button, Text } from 'react-native';
-import { presentPaymentSheet, useHyper } from 'hyperswitch-sdk-react-native';
+import { useHyper } from 'hyperswitch-sdk-react-native';
 import HeadlessExampleComponent from './HeadlessExampleComponent';
 
 export default function PaymentScreen() {
@@ -84,25 +84,17 @@ export default function PaymentScreen() {
         id: customerId,
         ephemeralKeySecret: ephemeralKey,
       },
-      // type: 'payment',
-      // from: 'rn',
     };
 
     const paymentSheetParams = initPaymentSession(paymentSheetProps);
 
-    console.log('paymentSheet Params-------------->' + paymentSheetParams);
     let res = await presentPaymentSheet(paymentSheetParams);
-    console.log('Payment Result dfdsfknsdjkf' + res.status);
     const stringifiedResponse = JSON.stringify(res);
     setResponse(stringifiedResponse);
   };
   let openPaymentSheet = async () => {
     await initializePaymentSheet();
   };
-
-  // React.useEffect(() => {
-  //   test();
-  // }, []);
 
   return (
     <View style={styles.container}>

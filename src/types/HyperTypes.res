@@ -145,6 +145,7 @@ type configurationType = {
 }
 type sendingToRNSDK = {
   configuration?: configurationType,
+  customBackendUrl?: option<string>,
   publishableKey: string,
   clientSecret: string,
   \"type": string,
@@ -165,17 +166,18 @@ type paymentSheetTheme = [
 type hyperProviderTypes = {
   // clientsecret: clientsecret,
   publishableKey: string,
+  customBackendUrl?: option<string>,
   // customerId: customerId,
   // appearance: option<AppType.appearanceType>,
   // applePay: option<applePayType>,
   // googlePay: option<googlePayType>,
   // allowsDelayedPaymentMethods: bool,
   // primaryButtonLabel: string,
-  merchantIdentifier: string,
-  stripeAccountId: string,
-  threeDSecureParams: string,
-  urlScheme: string,
-  setReturnUrlSchemeOnAndroid: string,
+  // merchantIdentifier: string,
+  // stripeAccountId: string,
+  // threeDSecureParams: string,
+  // urlScheme: string,
+  // setReturnUrlSchemeOnAndroid: string,
   // theme: paymentSheetTheme,
   // customerEphemeralKeySecret: customerEphemeralKeySecret,
 }
