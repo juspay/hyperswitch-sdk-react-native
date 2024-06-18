@@ -90,6 +90,9 @@ class Utils {
               transaction.hide(reactNativeFragmentSheet!!)
             transaction.replace(android.R.id.content, reactNativeFragmentSheet!!).commit()
           } else {
+
+            if (isHidden == true)
+              transaction.hide(reactNativeFragmentSheet!!)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom)
               .show(reactNativeFragmentSheet!!).commit();
           }
@@ -114,6 +117,56 @@ class Utils {
           .addFragmentOnAttachListener { _, _ ->
             context.savedStateRegistry.unregisterSavedStateProvider("android:support:fragments")
           }
+      }
+    }
+    fun openReactViewInBackground(
+      context: AppCompatActivity,
+      request: Bundle,
+      message: String,
+      id: Int?,
+      isHidden: Boolean? = false
+    ) {
+      // Initialize React context in the background
+//      reactInstanceManager!!.createReactContextInBackground()
+
+      // Run on UI thread if needed, although you are not manipulating UI here
+      context.runOnUiThread {
+        val userAgent = getUserAgent(context)
+
+        val launchOptions = getLaunchOptions(
+          request,
+          message,
+          context.packageName,
+          context.resources.configuration.locale.country,
+          userAgent
+        )
+
+        // Ensure the fragment is not added to the UI
+        if (reactNativeFragmentSheet == null) {
+          lastRequest = request
+          reactNativeFragmentSheet = HyperswitchFragment.Builder()
+            .setComponentName("hyperSwitch")
+            .setLaunchOptions(launchOptions)
+            .build()
+
+          // Initialize the fragment without adding it to the UI
+          context.supportFragmentManager.beginTransaction()
+            .add(android.R.id.content, reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
+          context.supportFragmentManager.beginTransaction()
+            .remove(reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
+        } else if (areBundlesNotEqual(request, lastRequest)) {
+          lastRequest = request
+          reactNativeFragmentSheet = HyperswitchFragment.Builder()
+            .setComponentName("hyperSwitch")
+            .setLaunchOptions(launchOptions)
+            .build()
+
+          // Initialize the fragment without adding it to the UI
+          context.supportFragmentManager.beginTransaction()
+            .add(android.R.id.content, reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
+          context.supportFragmentManager.beginTransaction()
+            .remove(reactNativeFragmentSheet!!).commitNowAllowingStateLoss()
+        }
       }
     }
 

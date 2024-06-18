@@ -132,13 +132,30 @@ class PaymentSession {
     request: Bundle
 
   ) {
-    Utils.openReactView(
+//    Utils.openReactView(
+//      currentActivity,
+//      request,
+//      "payment", null, isHidden = true
+//    )
+
+    Utils.openReactViewInBackground(
       currentActivity,
       request,
       "payment", null, isHidden = true
     )
+    if (reactInstanceManager == null) {
+      throw Exception("Payment Session Initialisation Failed")
+    } else {
+      val reactContext = reactInstanceManager!!.currentReactContext
+
+      if (reactContext == null) {
+        reactInstanceManager!!.createReactContextInBackground()
+      } else {
+        reactInstanceManager!!.recreateReactContextInBackground()
+      }
+    }
     Companion.paymentIntentClientSecret = paymentIntentClientSecret
-    Companion.publishableKey=request.getString("publishableKey")
+    Companion.publishableKey = request.getString("publishableKey")
   }
 
 //  fun presentPaymentSheet(resultCallback: (PaymentSheetResult) -> Unit) {
@@ -192,7 +209,7 @@ class PaymentSession {
     private lateinit var activity: Activity
 
     var paymentIntentClientSecret: String? = null
-    var publishableKey:String?=null
+    var publishableKey: String? = null
     var completion: ((PaymentSessionHandler) -> Unit)? = null
     var headlessCompletion: ((PaymentResult) -> Unit)? = null
 

@@ -5,7 +5,7 @@ import { presentPaymentSheet, useHyper } from 'hyperswitch-sdk-react-native';
 import HeadlessExampleComponent from './HeadlessExampleComponent';
 
 export default function PaymentScreen() {
-  const { initPaymentSheet, presentPaymentSheet } = useHyper();
+  const { initPaymentSession, presentPaymentSheet } = useHyper();
 
   const [response, setResponse] = React.useState('');
 
@@ -88,7 +88,7 @@ export default function PaymentScreen() {
       // from: 'rn',
     };
 
-    const paymentSheetParams = initPaymentSheet(paymentSheetProps);
+    const paymentSheetParams = initPaymentSession(paymentSheetProps);
 
     console.log('paymentSheet Params-------------->' + paymentSheetParams);
     let res = await presentPaymentSheet(paymentSheetParams);
@@ -111,7 +111,7 @@ export default function PaymentScreen() {
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>
         {response}
       </Text>
-      <HeadlessExampleComponent />
+      {/* <HeadlessExampleComponent /> */}
     </View>
   );
 }

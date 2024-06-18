@@ -1,11 +1,13 @@
 package com.juspaytech.reactnativehyperswitch
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
 import com.hyperswitchsdkreactnative.react.Utils
+import com.juspaytech.reactnativehyperswitch.payments.gpay.GooglePayActivity
 import io.hyperswitch.PaymentMethod
 
 import io.hyperswitch.PaymentSession
@@ -33,8 +35,8 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun getCustomerSavedPaymentMethodData(request: ReadableMap, callBack: Callback) {
-    sheetCallback = callBack
-    println("getCustomerSavedPaymentMethodData called!!!!!!" + request)
+//    sheetCallback = callBack
+    println("getCustomerSavedP`aymentMethodData called!!!!!!" + request)
 
     val callBackMap = Arguments.createMap()
     reactApplicationContext.currentActivity?.runOnUiThread {
@@ -62,16 +64,16 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
           is PaymentMethod.Card -> {
             println(defaultPaymentMethod.toHashMap())
 
-            callBackMap.putString("paymentMethodType","Card")
+            callBackMap.putString("paymentMethodType", "Card")
             callBackMap.putMap(
               "data",
-             Arguments.makeNativeMap( defaultPaymentMethod.toHashMap())
+              Arguments.makeNativeMap(defaultPaymentMethod.toHashMap())
             )
           }
 
           is PaymentMethod.Wallet -> {
             println(defaultPaymentMethod.toHashMap())
-            callBackMap.putString("paymentMethodType","Wallet")
+            callBackMap.putString("paymentMethodType", "Wallet")
             callBackMap.putString(
               "defaultPaymentMethod",
               defaultPaymentMethod.toHashMap().toString()
@@ -90,18 +92,17 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
         }
 
         callBack.invoke(callBackMap)
-
-
-
         Log.i("customer saved data", defaultPaymentMethod.toString())
       }
+
+
     }
   }
 
   @ReactMethod
   fun confirmWithCustomerDefaultPaymentMethod(request: ReadableMap, callBack: Callback) {
 //    sheetCallback = callBack
-    println("getCustomerSavedPaymentMethodData called!!!!!!" + request)
+    println("confirmWithCustomerDefaultPaymentMethod" + request)
 
 
     reactApplicationContext.currentActivity?.runOnUiThread {
@@ -215,20 +216,20 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     Log.d("This log is from java", rnMessage!!)
   }
 
-  //  fun gPayWalletCall(gPayRequest: String, callback: Callback) {
-  //    googlePayCallback = callback
-  //    val myIntent = Intent(
-  //      currentActivity,
-  //      GooglePayActivity::class.java
-  //    )
-  //    myIntent.putExtra("gPayRequest", gPayRequest)
-  //    currentActivity?.startActivity(myIntent)
-  //  }
+    fun gPayWalletCall(gPayRequest: String, callback: Callback) {
+      googlePayCallback = callback
+      val myIntent = Intent(
+        currentActivity,
+        GooglePayActivity::class.java
+      )
+      myIntent.putExtra("gPayRequest", gPayRequest)
+      currentActivity?.startActivity(myIntent)
+    }
 
-//  @ReactMethod
-//  fun launchGPay(gPayRequest: String, callBack: Callback) {
-//    gPayWalletCall(gPayRequest, callBack)
-//  }
+  @ReactMethod
+  fun launchGPay(gPayRequest: String, callBack: Callback) {
+    gPayWalletCall(gPayRequest, callBack)
+  }
 
   @ReactMethod
   fun exitCardForm(paymentResult: String) {
@@ -256,7 +257,7 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
   companion object {
     const val NAME = "HyperModule"
 
-    //    @JvmStatic lateinit var googlePayCallback: Callback
+        @JvmStatic lateinit var googlePayCallback: Callback
     @JvmStatic
     lateinit var sheetCallback: Callback
 

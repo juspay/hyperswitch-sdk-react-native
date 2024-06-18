@@ -132,7 +132,7 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 //  implementation "io.hyperswitch:hyperswitch-android:$hsSdkVersion"
 //  implementation 'io.hyperswitch:react-native-hyperswitch-scancard:0.0.1'
-//  implementation 'com.google.android.gms:play-services-wallet:19.2.1'
+  implementation 'com.google.android.gms:play-services-wallet:19.2.1'
   implementation project(':react-native-code-push')
   implementation project(':react-native-code-push')
   implementation project(':react-native-gesture-handler')
@@ -144,6 +144,12 @@ dependencies {
   implementation project(':react-native-screens')
   implementation project(':react-native-svg')
   implementation project(':react-native-screens')
+  // ViewModel and LiveData
+  implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+  implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+
+  // Activity KTX for viewModels() property delegate
+  implementation "androidx.activity:activity-ktx:1.6.1"
 }
 
 

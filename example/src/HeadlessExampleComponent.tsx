@@ -5,7 +5,7 @@ import { presentPaymentSheet, useHyper } from 'hyperswitch-sdk-react-native';
 
 export default function HeadlessExampleComponent() {
   const {
-    initPaymentSheet,
+    initPaymentSession,
     presentPaymentSheet,
     initHeadless,
     getCustomerSavedPaymentMethodData,
@@ -13,6 +13,8 @@ export default function HeadlessExampleComponent() {
   } = useHyper();
 
   const [response, setResponse] = React.useState('');
+
+  const [clientSecret, setClientSecret] = React.useState('');
 
   const fetchPaymentParams = async () => {
     const response = await fetch(
@@ -32,68 +34,40 @@ export default function HeadlessExampleComponent() {
     return val;
   };
 
-  // const initializePaymentSheet = async () => {
-  //   const { clientSecret, customerId, ephemeralKey } =
-  //     await fetchPaymentParams();
-
-  //   console.log('clientSecret', clientSecret);
-
-  //   const paymentSheetProps = {
-  //     clientSecret: clientSecret,
-  //   };
-
-  //   const paymentSheetParams = initPaymentSheet(paymentSheetProps);
-
-  //   console.log('paymentSheet Params-------------->' + paymentSheetParams);
-  //   let res = await presentPaymentSheet(paymentSheetParams);
-  //   console.log('Payment Result dfdsfknsdjkf' + res.status);
-  //   const stringifiedResponse = JSON.stringify(res);
-  //   setResponse(stringifiedResponse);
-  // };
-  let initialiseHeadless = async () => {
+  let createPayment = async () => {
     const { clientSecret, customerId, ephemeralKey } =
       await fetchPaymentParams();
-    let params = {
-      clientSecret: clientSecret,
-    };
-    initHeadless(params);
+    setClientSecret(clientSecret);
   };
 
   let confirmWithDefault = async () => {
-    const { clientSecret, customerId, ephemeralKey } =
-      await fetchPaymentParams();
     console.log('called!!!!!!!!!!!!!!!!');
-    let params = {
+    let params = initPaymentSession({
       clientSecret: clientSecret,
-    };
+    });
 
-    // getCustomerSavedPaymentMethodData(params);
     const resp = await confirmWithCustomerDefaultPaymentMethod(params);
     console.log('Headless example component--------', resp.message);
+    setResponse(JSON.stringify(resp));
   };
 
   let getDefaultCustomerPaymentMethod = async () => {
-    const { clientSecret, customerId, ephemeralKey } =
-      await fetchPaymentParams();
     console.log('called!!!!!!!!!!!!!!!!');
-    let params = {
+
+    let params = initPaymentSession({
       clientSecret: clientSecret,
-    };
+    });
 
     const pmObj = await getCustomerSavedPaymentMethodData(params);
-    // const resp = await confirmWithCustomerDefaultPaymentMethod(params);
     console.log('Headless example component--------', pmObj);
+    setResponse(JSON.stringify(pmObj));
   };
-
-  // React.useEffect(() => {
-  //   test();
-  // }, []);
 
   return (
     <View>
       <View style={{ marginTop: 50 }}>
         <Text style={{ fontSize: 20 }}>Headless Mode</Text>
-        <Button title="Initialize Headless" onPress={initialiseHeadless} />
+        <Button title="Create Payment" onPress={createPayment} />
         <View style={{ marginTop: 10 }} />
         <Button
           title="Get Customer Default Payment Method"

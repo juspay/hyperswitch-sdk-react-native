@@ -7,7 +7,7 @@ import * as HyperNativeModules from "../nativeModules/HyperNativeModules.res.js"
 function useHyper() {
   var match = React.useContext(HyperProvider.hyperProviderContext);
   var hyperVal = match[0];
-  var initPaymentSheet = function (initPaymentSheetParams) {
+  var initPaymentSession = function (initPaymentSheetParams) {
     console.log("hello world", hyperVal);
     return {
             configuration: initPaymentSheetParams.configuration,
@@ -81,7 +81,7 @@ function useHyper() {
                 }));
   };
   return {
-          initPaymentSheet: initPaymentSheet,
+          initPaymentSession: initPaymentSession,
           presentPaymentSheet: presentPaymentSheet,
           paymentMethodParams: paymentMethodParams,
           initHeadless: initHeadless,

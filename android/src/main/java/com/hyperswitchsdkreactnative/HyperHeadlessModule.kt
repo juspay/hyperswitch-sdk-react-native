@@ -1,5 +1,6 @@
 package io.hyperswitch.react
 
+import android.util.Log
 import com.facebook.react.bridge.*
 import com.juspaytech.reactnativehyperswitch.ReactNativeHyperswitchModule
 //import io.hyperswitch.PaymentConfiguration
@@ -50,6 +51,7 @@ class HyperHeadlessModule internal constructor(private val rct: ReactApplication
   @ReactMethod
   fun exitHeadless(status: ReadableMap) {
     // Call the exitHeadless method from PaymentSession singleton
+    Log.i("Exit Headless","called")
     PaymentSession.exitHeadless(status)
   }
 }
