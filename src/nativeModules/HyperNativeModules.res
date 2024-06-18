@@ -72,14 +72,6 @@ let initHeadless = (requestObj: Js.Json.t, callback) => {
   hyperswitch.initHeadless(requestObj, callback)
 }
 
-let getCustomerSavedPaymentMethodData = (requestObj: Js.Json.t, callback) => {
-  hyperswitch.getCustomerSavedPaymentMethodData(requestObj, callback)
-}
-
-let confirmWithCustomerDefaultPaymentMethod = (requestObj: Js.Json.t, callback) => {
-  hyperswitch.confirmWithCustomerDefaultPaymentMethod(requestObj, callback)
-}
-
 let registerHeadless = (requestObj: Js.Json.t, callback) => {
   Console.log2(">>>>>>>>>>><<<<<<<<<", hyperswitch.registerHeadless)
   hyperswitch.registerHeadless(requestObj, callback)
@@ -95,4 +87,12 @@ let getCustomerLastUsedPaymentMethodData = (requestObj: Js.Json.t, callback) => 
 
 let getCustomerSavedPaymentMethodData = (requestObj: Js.Json.t, callback) => {
   hyperswitch.getCustomerSavedPaymentMethodData(requestObj, callback)
+}
+
+let confirmWithCustomerDefaultPaymentMethod = (requestObj: Js.Json.t, callback) => {
+  hyperswitch.confirmWithCustomerDefaultPaymentMethod(requestObj, callback)
+}
+
+let confirmWithCustomerLastUsedPaymentMethod = (requestObj: Js.Json.t, callback) => {
+  hyperswitch.confirmWithCustomerLastUsedPaymentMethod(requestObj, callback)
 }

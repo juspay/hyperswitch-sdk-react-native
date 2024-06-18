@@ -3,9 +3,6 @@ type useHyperReturnType = {
   initPaymentSession: HyperTypes.initPaymentSheetParamTypes => HyperTypes.sendingToRNSDK,
   presentPaymentSheet: HyperTypes.sendingToRNSDK => promise<HyperTypes.responseFromNativeModule>,
   registerHeadless: HyperTypes.sendingToRNSDK => unit,
-  confirmWithCustomerDefaultPaymentMethod: HyperTypes.sendingToRNSDK => promise<
-    HyperTypes.headlessConfirmResponseType,
-  >,
   getCustomerDefaultSavedPaymentMethodData: HyperTypes.sendingToRNSDK => promise<
     HyperTypes.savedPaymentMethodType,
   >,
@@ -14,6 +11,12 @@ type useHyperReturnType = {
   >,
   getCustomerSavedPaymentMethodData: HyperTypes.sendingToRNSDK => promise<
     array<HyperTypes.savedPaymentMethodType>,
+  >,
+  confirmWithCustomerDefaultPaymentMethod: HyperTypes.sendingToRNSDK => promise<
+    HyperTypes.headlessConfirmResponseType,
+  >,
+  confirmWithCustomerLastUsedPaymentMethod: HyperTypes.sendingToRNSDK => promise<
+    HyperTypes.headlessConfirmResponseType,
   >,
 }
 
@@ -81,20 +84,6 @@ let useHyper = () => {
   //     HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParamsJson, responseResolve)
   //   })
   // }
-  let confirmWithCustomerDefaultPaymentMethod = (paySheetParams: HyperTypes.sendingToRNSDK) => {
-    let paySheetParamsJson = paySheetParams->parser
-
-    Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
-      let responseResolve = arg => {
-        let val = arg->HyperTypes.parseConfirmResponse
-        resolve(val)
-      }
-      HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(
-        paySheetParamsJson,
-        responseResolve,
-      )
-    })
-  }
 
   let getCustomerDefaultSavedPaymentMethodData = (paySheetParams: HyperTypes.sendingToRNSDK) => {
     let paySheetParamsJson = paySheetParams->parser
@@ -140,13 +129,50 @@ let useHyper = () => {
     })
   }
 
+  let confirmWithCustomerDefaultPaymentMethod = (paySheetParams: HyperTypes.sendingToRNSDK) => {
+    let paySheetParamsJson = paySheetParams->parser
+
+    Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
+      let responseResolve = arg => {
+        Console.log(arg)
+
+        let val = arg->HyperTypes.parseConfirmResponse
+
+        resolve(val)
+      }
+      HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(
+        paySheetParamsJson,
+        responseResolve,
+      )
+    })
+  }
+
+  let confirmWithCustomerLastUsedPaymentMethod = (paySheetParams: HyperTypes.sendingToRNSDK) => {
+    let paySheetParamsJson = paySheetParams->parser
+
+    Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
+      let responseResolve = arg => {
+        Console.log(arg)
+
+        let val = arg->HyperTypes.parseConfirmResponse
+
+        resolve(val)
+      }
+      HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(
+        paySheetParamsJson,
+        responseResolve,
+      )
+    })
+  }
+
   {
     initPaymentSession,
     presentPaymentSheet,
     registerHeadless,
-    confirmWithCustomerDefaultPaymentMethod,
     getCustomerDefaultSavedPaymentMethodData,
     getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,
+    confirmWithCustomerDefaultPaymentMethod,
+    confirmWithCustomerLastUsedPaymentMethod,
   }
 }

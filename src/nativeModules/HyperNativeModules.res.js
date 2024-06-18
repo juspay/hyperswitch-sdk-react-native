@@ -70,10 +70,6 @@ function initHeadless(requestObj, callback) {
   hyperswitch_initHeadless(requestObj, callback);
 }
 
-function confirmWithCustomerDefaultPaymentMethod(requestObj, callback) {
-  hyperswitch_confirmWithCustomerDefaultPaymentMethod(requestObj, callback);
-}
-
 function registerHeadless(requestObj, callback) {
   console.log(">>>>>>>>>>><<<<<<<<<", hyperswitch_registerHeadless);
   hyperswitch_registerHeadless(requestObj, callback);
@@ -91,6 +87,14 @@ function getCustomerSavedPaymentMethodData(requestObj, callback) {
   hyperswitch_getCustomerSavedPaymentMethodData(requestObj, callback);
 }
 
+function confirmWithCustomerDefaultPaymentMethod(requestObj, callback) {
+  hyperswitch_confirmWithCustomerDefaultPaymentMethod(requestObj, callback);
+}
+
+function confirmWithCustomerLastUsedPaymentMethod(requestObj, callback) {
+  hyperswitch_confirmWithCustomerLastUsedPaymentMethod(requestObj, callback);
+}
+
 export {
   hyperswitchDict ,
   getJsonFunWithCallbackFromKey ,
@@ -98,10 +102,11 @@ export {
   hyperswitch ,
   presentPaymentSheet ,
   initHeadless ,
-  confirmWithCustomerDefaultPaymentMethod ,
   registerHeadless ,
   getCustomerDefaultSavedPaymentMethodData ,
   getCustomerLastUsedPaymentMethodData ,
   getCustomerSavedPaymentMethodData ,
+  confirmWithCustomerDefaultPaymentMethod ,
+  confirmWithCustomerLastUsedPaymentMethod ,
 }
 /* hyperswitchDict Not a pure module */

@@ -12,6 +12,8 @@ export default function HeadlessExampleComponent() {
     getCustomerDefaultSavedPaymentMethodData,
     getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,
+    confirmWithCustomerDefaultPaymentMethod,
+    confirmWithCustomerLastUsedPaymentMethod,
     // confirmWithCustomerDefaultPaymentMethod,
   } = useHyper();
 
@@ -91,6 +93,32 @@ export default function HeadlessExampleComponent() {
     setResponse(`{${JSON.stringify(pmObj[0])}....}`);
   };
 
+  let confirmWithCustomerDefaultPM = async () => {
+    console.log('called!!!!!!!!!!!!!!!!');
+
+    let params = initPaymentSession({
+      clientSecret: clientSecret,
+    });
+
+    const response = await confirmWithCustomerDefaultPaymentMethod(params);
+
+    console.log('Headless example component--------', response);
+    setResponse(JSON.stringify(response));
+  };
+
+  let confirmWithLastUsedPM = async () => {
+    console.log('called!!!!!!!!!!!!!!!!');
+
+    let params = initPaymentSession({
+      clientSecret: clientSecret,
+    });
+
+    const response = await confirmWithCustomerLastUsedPaymentMethod(params);
+
+    console.log('Headless example component--------', response);
+    setResponse(JSON.stringify(response));
+  };
+
   return (
     <View>
       <View style={{ marginTop: 50 }}>
@@ -111,6 +139,16 @@ export default function HeadlessExampleComponent() {
         <Button
           title="get All Saved Payment Method Data"
           onPress={getAllSavedPaymentMethodData}
+        />
+        <View style={{ marginTop: 10 }} />
+        <Button
+          title="Confirm with Default Saved Payment Method"
+          onPress={confirmWithCustomerDefaultPM}
+        />
+        <View style={{ marginTop: 10 }} />
+        <Button
+          title="Confirm with Last Used Saved Payment Method"
+          onPress={confirmWithLastUsedPM}
         />
       </View>
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>

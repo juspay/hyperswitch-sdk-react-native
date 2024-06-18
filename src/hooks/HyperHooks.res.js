@@ -34,14 +34,6 @@ function useHyper() {
                   HyperNativeModules.presentPaymentSheet(paySheetParams, responseResolve);
                 }));
   };
-  var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams) {
-    return new Promise((function (resolve, param) {
-                  var responseResolve = function (arg) {
-                    resolve(arg);
-                  };
-                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParams, responseResolve);
-                }));
-  };
   var getCustomerDefaultSavedPaymentMethodData = function (paySheetParams) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
@@ -69,14 +61,33 @@ function useHyper() {
                   HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParams, responseResolve);
                 }));
   };
+  var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams) {
+    return new Promise((function (resolve, param) {
+                  var responseResolve = function (arg) {
+                    console.log(arg);
+                    resolve(arg);
+                  };
+                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParams, responseResolve);
+                }));
+  };
+  var confirmWithCustomerLastUsedPaymentMethod = function (paySheetParams) {
+    return new Promise((function (resolve, param) {
+                  var responseResolve = function (arg) {
+                    console.log(arg);
+                    resolve(arg);
+                  };
+                  HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParams, responseResolve);
+                }));
+  };
   return {
           initPaymentSession: initPaymentSession,
           presentPaymentSheet: presentPaymentSheet,
           registerHeadless: registerHeadless,
-          confirmWithCustomerDefaultPaymentMethod: confirmWithCustomerDefaultPaymentMethod,
           getCustomerDefaultSavedPaymentMethodData: getCustomerDefaultSavedPaymentMethodData,
           getCustomerLastUsedPaymentMethodData: getCustomerLastUsedPaymentMethodData,
-          getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData
+          getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData,
+          confirmWithCustomerDefaultPaymentMethod: confirmWithCustomerDefaultPaymentMethod,
+          confirmWithCustomerLastUsedPaymentMethod: confirmWithCustomerLastUsedPaymentMethod
         };
 }
 
