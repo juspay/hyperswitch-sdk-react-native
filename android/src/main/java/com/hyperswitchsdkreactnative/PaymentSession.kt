@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory
 import com.facebook.react.HyperPackageList
-import com.facebook.react.ReactActivity
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactRootView
@@ -19,15 +18,18 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.common.LifecycleState
+import com.hyperswitchsdkreactnative.BuildConfig
+import com.hyperswitchsdkreactnative.ReactNativeHyperswitchPackage
 import com.hyperswitchsdkreactnative.react.Utils
-import com.juspaytech.reactnativehyperswitch.ReactNativeHyperswitchModule
 import com.microsoft.codepush.react.CodePush
 import io.hyperswitch.payments.paymentlauncher.PaymentResult
-
+//import io.hyperswitch.paymentsheet.PaymentSheet
+import io.hyperswitch.paymentsheet.PaymentSheetResult
+//import io.hyperswitch.react.Utils
 
 class PaymentSession {
-  //  private var paymentSheet: PaymentSheet? = null
-//  private var sheetCompletion: ((PaymentSheetResult) -> Unit)? = null
+//  private var paymentSheet: PaymentSheet? = null
+  private var sheetCompletion: ((PaymentSheetResult) -> Unit)? = null
   private var reactInstanceManager: ReactInstanceManager? = null
   private var illegalState: IllegalStateException? = null
 
@@ -71,38 +73,52 @@ class PaymentSession {
       try {
         val application = activity.application as ReactApplication
 //        reactInstanceManager = application.reactNativeHost.reactInstanceManager
-        val packages = HyperPackageList(activity?.application, activity.baseContext).packages
+
+//        val mReactRootView = ReactRootView(context)
+        CodePush.overrideAppVersion("1.2.0")
+
+        val packages = HyperPackageList(activity?.application, activity).packages
+        packages.add(ReactNativeHyperswitchPackage())
+
         reactInstanceManager = ReactInstanceManager.builder()
           .setApplication(activity?.application)
           .setCurrentActivity(activity)
           .addPackages(packages)
           .setBundleAssetName("hyperswitch.bundle")
           .setJSMainModulePath("index")
-          .setJSBundleFile("hyperswitch.bundle")
+//      .setJSBundleFile("hyperswitch.bundle")
           .setJSBundleFile(CodePush.getJSBundleFile("hyperswitch.bundle"))
           .setJavaScriptExecutorFactory(HermesExecutorFactory())
           .setUseDeveloperSupport(false)
           .setInitialLifecycleState(LifecycleState.RESUMED)
           .build()
 
-        val mReactRootView = ReactRootView(activity)
-        mReactRootView.startReactApplication(reactInstanceManager, "")
+//        var mainComponentName: String? = null
+//        var launchOptions: Bundle? = null
+//        if (this.arguments != null) {
+//          mainComponentName = this.requireArguments().getString("arg_component_name")
+//          launchOptions = this.requireArguments().getBundle("arg_launch_options")
+//        }
+//        checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
+
+        CodePush.setReactInstanceHolder { reactInstanceManager }
+//        mReactRootView.startReactApplication(mReactInstanceManager, mainComponentName, launchOptions)
       } catch (ex: RuntimeException) {
         throw RuntimeException(
           "Please remove \"android:name\" from application tag in AndroidManifest.xml", ex
         )
       }
 
-//      if (publishableKey != null) {
-//        PaymentConfiguration.init(
-//          activity.applicationContext,
-//          publishableKey,
-//          "",
-//          customBackendUrl,
-//          customParams,
-//          customLogUrl
-//        )
-//      }
+      if (publishableKey != null) {
+        PaymentConfiguration.init(
+          activity.applicationContext,
+          publishableKey,
+          "",
+          customBackendUrl,
+          customParams,
+          customLogUrl
+        )
+      }
 
 //      if (fragment == null) {
 //        try {
@@ -127,39 +143,13 @@ class PaymentSession {
   }
 
   fun initPaymentSession(
-    paymentIntentClientSecret: String,
-    currentActivity: ReactActivity,
-    request: Bundle
-
+    paymentIntentClientSecret: String
   ) {
-//    Utils.openReactView(
-//      currentActivity,
-//      request,
-//      "payment", null, isHidden = true
-//    )
-
-    Utils.openReactViewInBackground(
-      currentActivity,
-      request,
-      "payment", null, isHidden = true
-    )
-    if (reactInstanceManager == null) {
-      throw Exception("Payment Session Initialisation Failed")
-    } else {
-      val reactContext = reactInstanceManager!!.currentReactContext
-
-      if (reactContext == null) {
-        reactInstanceManager!!.createReactContextInBackground()
-      } else {
-        reactInstanceManager!!.recreateReactContextInBackground()
-      }
-    }
     Companion.paymentIntentClientSecret = paymentIntentClientSecret
-    Companion.publishableKey = request.getString("publishableKey")
   }
 
 //  fun presentPaymentSheet(resultCallback: (PaymentSheetResult) -> Unit) {
-//    presentPaymentSheet(null, resultCallback)
+////    presentPaymentSheet(null, resultCallback)
 //  }
 
 //  fun presentPaymentSheet(configuration: PaymentSheet.Configuration? = null, resultCallback: (PaymentSheetResult) -> Unit) {
@@ -180,9 +170,9 @@ class PaymentSession {
 //    }
 //  }
 
-//  private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
-//    sheetCompletion?.let { it(paymentSheetResult) }
-//  }
+  private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
+    sheetCompletion?.let { it(paymentSheetResult) }
+  }
 
   @SuppressLint("VisibleForTests")
   fun getCustomerSavedPaymentMethods(
@@ -209,13 +199,12 @@ class PaymentSession {
     private lateinit var activity: Activity
 
     var paymentIntentClientSecret: String? = null
-    var publishableKey: String? = null
     var completion: ((PaymentSessionHandler) -> Unit)? = null
     var headlessCompletion: ((PaymentResult) -> Unit)? = null
 
     fun getPaymentSession(
       getPaymentMethodData: ReadableMap,
-
+      getPaymentMethodData2: ReadableMap,
       getPaymentMethodDataArray: ReadableArray,
       callback: Callback
     ) {
@@ -224,9 +213,9 @@ class PaymentSession {
           return parseGetPaymentMethodData(getPaymentMethodData)
         }
 
-//        override fun getCustomerLastUsedPaymentMethodData(): PaymentMethod {
-//          return parseGetPaymentMethodData(getPaymentMethodData2)
-//        }
+        override fun getCustomerLastUsedPaymentMethodData(): PaymentMethod {
+          return parseGetPaymentMethodData(getPaymentMethodData2)
+        }
 
         override fun getCustomerSavedPaymentMethodData(): Array<PaymentMethod> {
           val array = mutableListOf<PaymentMethod>()
@@ -243,13 +232,12 @@ class PaymentSession {
             ?.let { confirmWithCustomerPaymentToken(it, cvc, resultHandler) }
         }
 
-
-//        override fun confirmWithCustomerLastUsedPaymentMethod(
-//          cvc: String?, resultHandler: (PaymentResult) -> Unit
-//        ) {
-//          getPaymentMethodData2.getMap("_0")?.getString("payment_token")
-//            ?.let { confirmWithCustomerPaymentToken(it, cvc, resultHandler) }
-//        }
+        override fun confirmWithCustomerLastUsedPaymentMethod(
+          cvc: String?, resultHandler: (PaymentResult) -> Unit
+        ) {
+          getPaymentMethodData2.getMap("_0")?.getString("payment_token")
+            ?.let { confirmWithCustomerPaymentToken(it, cvc, resultHandler) }
+        }
 
         override fun confirmWithCustomerPaymentToken(
           paymentToken: String, cvc: String?, resultHandler: (PaymentResult) -> Unit
@@ -327,10 +315,10 @@ class PaymentSession {
           activity.resources.configuration.locale.country
         }
       )
-//      hyperParams.putString("user-agent", Utils.getUserAgent(activity.applicationContext))
-//      hyperParams.putString("ip", Utils.getDeviceIPAddress(activity.applicationContext))
-//      hyperParams.putDouble("launchTime", Utils.getCurrentTime())
-//      hyperParams.putString("sdkVersion", BuildConfig.VERSION_NAME)
+      hyperParams.putString("user-agent", Utils.getUserAgent(activity.applicationContext))
+      hyperParams.putString("ip", Utils.getDeviceIPAddress(activity.applicationContext))
+      hyperParams.putDouble("launchTime", Utils.getCurrentTime())
+      hyperParams.putString("sdkVersion", "")
       return hyperParams
     }
 
@@ -417,16 +405,15 @@ sealed class PaymentMethod {
 
 interface PaymentSessionHandler {
   fun getCustomerDefaultSavedPaymentMethodData(): PaymentMethod
-
-  //  fun getCustomerLastUsedPaymentMethodData(): PaymentMethod
+  fun getCustomerLastUsedPaymentMethodData(): PaymentMethod
   fun getCustomerSavedPaymentMethodData(): Array<PaymentMethod>
   fun confirmWithCustomerDefaultPaymentMethod(
     cvc: String? = null, resultHandler: (PaymentResult) -> Unit
   )
 
-//  fun confirmWithCustomerLastUsedPaymentMethod(
-//    cvc: String? = null, resultHandler: (PaymentResult) -> Unit
-//  )
+  fun confirmWithCustomerLastUsedPaymentMethod(
+    cvc: String? = null, resultHandler: (PaymentResult) -> Unit
+  )
 
   fun confirmWithCustomerPaymentToken(
     paymentToken: String, cvc: String? = null, resultHandler: (PaymentResult) -> Unit

@@ -35,6 +35,8 @@ external parseJson: Js.Dict.t<Js.Json.t> => JSON.t = "%identity"
 // external cardDictToObj: Js.Dict.t<Js.Json.t> => savedCard = "%identity"
 external savedPMToObj: Js.Dict.t<Js.Json.t> => savedPaymentMethodType = "%identity"
 
+external savedPMToArrObj: option<Js.Json.t> => array<savedPaymentMethodType> = "%identity"
+
 let paymentMethodItemToObjMapper = pmItem => {
   let val = pmItem->parseJson
   let pmDict = val->JSON.Decode.object->Option.getOr(Dict.make())

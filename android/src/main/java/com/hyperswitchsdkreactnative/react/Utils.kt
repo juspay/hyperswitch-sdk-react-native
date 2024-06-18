@@ -2,11 +2,13 @@ package com.hyperswitchsdkreactnative.react
 
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
 import com.hyperswitchsdkreactnative.R
+import java.util.Locale
 
 class Utils {
   companion object {
@@ -184,7 +186,7 @@ class Utils {
     }
 
 
-    private fun getUserAgent(context: Context): String {
+    public fun getUserAgent(context: Context): String {
       return try {
         WebSettings.getDefaultUserAgent(context)
       } catch (e: RuntimeException) {
@@ -244,6 +246,24 @@ class Utils {
         reactNativeFragmentSheet!!.onBackPressed()
         true
       }
+    }
+
+    fun getCurrentTime(): Double {
+      return System.currentTimeMillis().toDouble()
+    }
+
+    // Get device IP address
+    fun getDeviceIPAddress(context: Context): String {
+      val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+      val wifiInfo = wifiManager.connectionInfo
+      val ipAddress = wifiInfo.ipAddress
+      return String.format(
+        Locale.getDefault(), "%d.%d.%d.%d",
+        ipAddress and 0xff,
+        ipAddress shr 8 and 0xff,
+        ipAddress shr 16 and 0xff,
+        ipAddress shr 24 and 0xff
+      )
     }
   }
 }

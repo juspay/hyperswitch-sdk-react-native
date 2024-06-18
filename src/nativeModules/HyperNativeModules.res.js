@@ -35,15 +35,30 @@ var hyperswitch_presentPaymentSheet = getJsonFunWithCallbackFromKey("presentPaym
 
 var hyperswitch_initHeadless = getJsonFunWithCallbackFromKey("initHeadless");
 
+var hyperswitch_registerHeadless = getJsonFunWithCallbackFromKey("registerHeadless");
+
+var hyperswitch_getCustomerDefaultSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerDefaultSavedPaymentMethodData");
+
+var hyperswitch_getCustomerLastUsedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerLastUsedPaymentMethodData");
+
 var hyperswitch_getCustomerSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerSavedPaymentMethodData");
 
 var hyperswitch_confirmWithCustomerDefaultPaymentMethod = getJsonFunWithCallbackFromKey("confirmWithCustomerDefaultPaymentMethod");
 
+var hyperswitch_confirmWithCustomerLastUsedPaymentMethod = getJsonFunWithCallbackFromKey("confirmWithCustomerLastUsedPaymentMethod");
+
+var hyperswitch_confirmWithCustomerPaymentToken = getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken");
+
 var hyperswitch = {
   presentPaymentSheet: hyperswitch_presentPaymentSheet,
   initHeadless: hyperswitch_initHeadless,
+  registerHeadless: hyperswitch_registerHeadless,
+  getCustomerDefaultSavedPaymentMethodData: hyperswitch_getCustomerDefaultSavedPaymentMethodData,
+  getCustomerLastUsedPaymentMethodData: hyperswitch_getCustomerLastUsedPaymentMethodData,
   getCustomerSavedPaymentMethodData: hyperswitch_getCustomerSavedPaymentMethodData,
-  confirmWithCustomerDefaultPaymentMethod: hyperswitch_confirmWithCustomerDefaultPaymentMethod
+  confirmWithCustomerDefaultPaymentMethod: hyperswitch_confirmWithCustomerDefaultPaymentMethod,
+  confirmWithCustomerLastUsedPaymentMethod: hyperswitch_confirmWithCustomerLastUsedPaymentMethod,
+  confirmWithCustomerPaymentToken: hyperswitch_confirmWithCustomerPaymentToken
 };
 
 function presentPaymentSheet(requestObj, callback) {
@@ -55,12 +70,25 @@ function initHeadless(requestObj, callback) {
   hyperswitch_initHeadless(requestObj, callback);
 }
 
-function getCustomerSavedPaymentMethodData(requestObj, callback) {
-  hyperswitch_getCustomerSavedPaymentMethodData(requestObj, callback);
-}
-
 function confirmWithCustomerDefaultPaymentMethod(requestObj, callback) {
   hyperswitch_confirmWithCustomerDefaultPaymentMethod(requestObj, callback);
+}
+
+function registerHeadless(requestObj, callback) {
+  console.log(">>>>>>>>>>><<<<<<<<<", hyperswitch_registerHeadless);
+  hyperswitch_registerHeadless(requestObj, callback);
+}
+
+function getCustomerDefaultSavedPaymentMethodData(requestObj, callback) {
+  hyperswitch_getCustomerDefaultSavedPaymentMethodData(requestObj, callback);
+}
+
+function getCustomerLastUsedPaymentMethodData(requestObj, callback) {
+  hyperswitch_getCustomerLastUsedPaymentMethodData(requestObj, callback);
+}
+
+function getCustomerSavedPaymentMethodData(requestObj, callback) {
+  hyperswitch_getCustomerSavedPaymentMethodData(requestObj, callback);
 }
 
 export {
@@ -70,7 +98,10 @@ export {
   hyperswitch ,
   presentPaymentSheet ,
   initHeadless ,
-  getCustomerSavedPaymentMethodData ,
   confirmWithCustomerDefaultPaymentMethod ,
+  registerHeadless ,
+  getCustomerDefaultSavedPaymentMethodData ,
+  getCustomerLastUsedPaymentMethodData ,
+  getCustomerSavedPaymentMethodData ,
 }
 /* hyperswitchDict Not a pure module */

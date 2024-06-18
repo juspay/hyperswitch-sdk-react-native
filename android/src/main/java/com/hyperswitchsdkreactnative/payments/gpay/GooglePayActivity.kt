@@ -1,5 +1,6 @@
 package com.juspaytech.reactnativehyperswitch.payments.gpay
 
+import ReactNativeHyperswitchModule.Companion.googlePayCallback
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +10,7 @@ import com.facebook.react.bridge.Arguments
 //import com.google.android.gms.pay.PayClient
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.PaymentData
-import com.juspaytech.reactnativehyperswitch.ReactNativeHyperswitchModule.Companion.googlePayCallback
+
 import org.json.JSONException
 import org.json.JSONObject
 

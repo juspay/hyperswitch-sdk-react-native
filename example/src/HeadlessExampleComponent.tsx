@@ -8,8 +8,11 @@ export default function HeadlessExampleComponent() {
     initPaymentSession,
     presentPaymentSheet,
     initHeadless,
+
+    getCustomerDefaultSavedPaymentMethodData,
+    getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,
-    confirmWithCustomerDefaultPaymentMethod,
+    // confirmWithCustomerDefaultPaymentMethod,
   } = useHyper();
 
   const [response, setResponse] = React.useState('');
@@ -40,16 +43,16 @@ export default function HeadlessExampleComponent() {
     setClientSecret(clientSecret);
   };
 
-  let confirmWithDefault = async () => {
-    console.log('called!!!!!!!!!!!!!!!!');
-    let params = initPaymentSession({
-      clientSecret: clientSecret,
-    });
+  // let confirmWithDefault = async () => {
+  //   console.log('called!!!!!!!!!!!!!!!!');
+  //   let params = initPaymentSession({
+  //     clientSecret: clientSecret,
+  //   });
 
-    const resp = await confirmWithCustomerDefaultPaymentMethod(params);
-    console.log('Headless example component--------', resp.message);
-    setResponse(JSON.stringify(resp));
-  };
+  //   const resp = await confirmWithCustomerDefaultPaymentMethod(params);
+  //   console.log('Headless example component--------', resp.message);
+  //   setResponse(JSON.stringify(resp));
+  // };
 
   let getDefaultCustomerPaymentMethod = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
@@ -58,9 +61,34 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
-    const pmObj = await getCustomerSavedPaymentMethodData(params);
+    const pmObj = await getCustomerDefaultSavedPaymentMethodData(params);
     console.log('Headless example component--------', pmObj);
     setResponse(JSON.stringify(pmObj));
+  };
+
+  let getCustomerLastUsedPaymentMethod = async () => {
+    console.log('called!!!!!!!!!!!!!!!!');
+
+    let params = initPaymentSession({
+      clientSecret: clientSecret,
+    });
+
+    const pmObj = await getCustomerLastUsedPaymentMethodData(params);
+    console.log('Headless example component--------', pmObj);
+    setResponse(JSON.stringify(pmObj));
+  };
+
+  let getAllSavedPaymentMethodData = async () => {
+    console.log('called!!!!!!!!!!!!!!!!');
+
+    let params = initPaymentSession({
+      clientSecret: clientSecret,
+    });
+
+    const pmObj = await getCustomerSavedPaymentMethodData(params);
+
+    console.log('Headless example component--------', pmObj);
+    setResponse(`{${JSON.stringify(pmObj[0])}....}`);
   };
 
   return (
@@ -70,11 +98,20 @@ export default function HeadlessExampleComponent() {
         <Button title="Create Payment" onPress={createPayment} />
         <View style={{ marginTop: 10 }} />
         <Button
-          title="Get Customer Default Payment Method"
+          title="get Customer Default Saved Payment Method Data"
           onPress={getDefaultCustomerPaymentMethod}
         />
         <View style={{ marginTop: 10 }} />
-        <Button title="Confirm Payment" onPress={confirmWithDefault} />
+        <Button
+          title="get Customer Last Used Saved Payment Method Data"
+          onPress={getCustomerLastUsedPaymentMethod}
+        />
+        <View style={{ marginTop: 10 }} />
+        {/* <Button title="Confirm Payment" onPress={confirmWithDefault} /> */}
+        <Button
+          title="get All Saved Payment Method Data"
+          onPress={getAllSavedPaymentMethodData}
+        />
       </View>
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>
         {response}
