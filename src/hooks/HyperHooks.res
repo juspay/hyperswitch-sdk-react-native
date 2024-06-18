@@ -1,4 +1,6 @@
 external parser: HyperTypes.sendingToRNSDK => Js.Json.t = "%identity"
+
+@genType
 type useHyperReturnType = {
   initPaymentSession: HyperTypes.initPaymentSheetParamTypes => HyperTypes.sendingToRNSDK,
   presentPaymentSheet: HyperTypes.sendingToRNSDK => promise<HyperTypes.responseFromNativeModule>,
@@ -20,7 +22,8 @@ type useHyperReturnType = {
   >,
 }
 
-let useHyper = () => {
+@genType
+let useHyper = (): useHyperReturnType => {
   let (hyperVal, _) = React.useContext(HyperProvider.hyperProviderContext)
 
   let registerHeadless = (paySheetParams: HyperTypes.sendingToRNSDK) => {
@@ -32,7 +35,7 @@ let useHyper = () => {
 
   let initPaymentSession = (initPaymentSheetParams: HyperTypes.initPaymentSheetParamTypes) => {
     let hsSdkParams: HyperTypes.sendingToRNSDK = {
-      configuration: initPaymentSheetParams.configuration,
+      configuration: initPaymentSheetParams.configuration->Option.getOr({}),
       customBackendUrl: hyperVal.customBackendUrl,
       publishableKey: hyperVal.publishableKey,
       clientSecret: initPaymentSheetParams.clientSecret,

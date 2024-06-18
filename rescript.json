@@ -1,6 +1,8 @@
 {
   "name": "hyperswitch-sdk-react-native",
-  "jsx": { "version": 4 },
+  "jsx": {
+    "version": 4
+  },
   "sources": [
     {
       "dir": "src", // update this to wherever you're putting ReScript files
@@ -19,5 +21,12 @@
     "rescript-react-native",
     "@rescript/react"
   ],
-  "bsc-flags": ["-open RescriptCore"]
+  "gentypeconfig": {
+    "module": "esmodule",
+    "moduleResolution": "node",
+    "generatedFileExtension": ".gen.tsx"
+  },
+  "bsc-flags": [
+    "-open RescriptCore"
+  ]
 }

@@ -1,3 +1,4 @@
+@genType
 type savedPaymentMethodType = {
   paymentMethodType: string,
   isDefaultPaymentMethod: bool,
@@ -14,6 +15,7 @@ type savedPaymentMethodType = {
   walletType?: string,
 }
 
+@genType
 type responseFromNativeModule = {
   type_: string,
   code: string,
@@ -21,6 +23,7 @@ type responseFromNativeModule = {
   status: string,
 }
 
+@genType
 type headlessConfirmResponseType = {
   message: string,
   type_: string,
@@ -46,47 +49,68 @@ let paymentMethodItemToObjMapper = pmItem => {
   let pmObj = {...pmDict->savedPMToObj, paymentMethodType: pMType}
   pmObj
 }
-
+@genType
 type customerConfiguration = {
   id: option<string>,
   ephemeralKeySecret: option<string>,
 }
+@genType
 type fontConfig = {
-  family: string,
-  scale: float,
+  family?: string,
+  scale?: float,
 }
+@genType
 type placeholder = {
   cardNumber: string,
   expiryDate: string,
   cvv: string,
 }
-
+@genType
 type offset = {
   x: float,
   y: float,
 }
-type globalColorConfig = {}
-type indirectColorType = {
-  light: globalColorConfig,
-  dark: globalColorConfig,
-}
+
+@genType
 type shadowConfig = {
   color: string,
   opacity: float,
   offset: offset,
   blurRadius: float,
 }
+@genType
 type shapes = {
-  borderRadius: float,
-  borderWidth: float,
-  shadow: shadowConfig,
+  borderRadius?: float,
+  borderWidth?: float,
+  shadow?: shadowConfig,
 }
-type colors = DirectColor(globalColorConfig) | IndirectColor(indirectColorType)
+
+@genType
+type color = {
+  primary?: option<string>,
+  background?: option<string>,
+  componentBackground?: option<string>,
+  componentBorder?: option<string>,
+  componentDivider?: option<string>,
+  componentText?: option<string>,
+  primaryText?: option<string>,
+  secondaryText?: option<string>,
+  placeholderText?: option<string>,
+  icon?: option<string>,
+  error?: option<string>,
+}
+@genType
+type colors = {
+  light?: color,
+  dark?: color,
+}
+@genType
 type primaryButton = {
-  font: fontConfig,
-  colors: colors,
-  shapes: shapes,
+  font?: fontConfig,
+  colors?: colors,
+  shapes?: shapes,
 }
+@genType
 type address = {
   first_name: option<string>,
   last_name: option<string>,
@@ -97,16 +121,19 @@ type address = {
   zip: option<string>,
   state: option<string>,
 }
+@genType
 type phone = {
   number: option<string>,
   country_code: option<string>,
 }
+@genType
 type addressDetails = {
   address: option<address>,
   email: option<string>,
   name: option<string>,
   phone: option<phone>,
 }
+@genType
 type appearance = {
   font?: fontConfig,
   colors?: colors,
@@ -115,13 +142,16 @@ type appearance = {
   themes?: string,
   locale?: string,
 }
+@genType
 type applePayType = {}
+@genType
 type googlePayConfiguration = {
   // Making stripe compatible
   environment: string,
   countryCode: string,
   currencyCode: option<string>,
 }
+@genType
 type configurationType = {
   allowsDelayedPaymentMethods?: bool,
   appearance?: appearance,
@@ -145,6 +175,7 @@ type configurationType = {
 
   // IOS specific
 }
+@genType
 type sendingToRNSDK = {
   configuration?: configurationType,
   customBackendUrl?: option<string>,
@@ -164,7 +195,7 @@ type paymentSheetTheme = [
   | #FlatMinimal
   | #Minimal
 ]
-
+@genType
 type hyperProviderTypes = {
   // clientsecret: clientsecret,
   publishableKey: string,
@@ -183,20 +214,21 @@ type hyperProviderTypes = {
   // theme: paymentSheetTheme,
   // customerEphemeralKeySecret: customerEphemeralKeySecret,
 }
+@genType
 type initPaymentSheetParamTypes = {
   clientSecret: string,
-  merchantDisplayName: string,
-  customerId: option<string>,
-  customerEphemeralKeySecret: option<string>,
+  merchantDisplayName?: string,
+  customerId?: option<string>,
+  customerEphemeralKeySecret?: option<string>,
   customFlow?: bool,
   style?: paymentSheetTheme,
   returnURL?: string,
-  configuration: configurationType,
+  configuration?: configurationType,
   // billingDetailsCollectionConfiguration?: BillingDetailsCollectionConfiguration,
   //defaultBillingDetails?: BillingDetails,
   //defaultShippingDetails?: AddressDetails,
   allowsDelayedPaymentMethods?: bool,
-  appearance: option<appearance>,
+  appearance?: appearance,
   primaryButtonLabel?: string,
   branding?: string,
   locale?: string,

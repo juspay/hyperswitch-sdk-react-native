@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as Js_dict from "rescript/lib/es6/js_dict.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Option from "@rescript/core/src/Core__Option.res.js";
 import * as HyperProvider from "../context/HyperProvider.res.js";
 import * as HyperNativeModules from "../nativeModules/HyperNativeModules.res.js";
 
@@ -17,7 +18,7 @@ function useHyper() {
   };
   var initPaymentSession = function (initPaymentSheetParams) {
     return {
-            configuration: initPaymentSheetParams.configuration,
+            configuration: Core__Option.getOr(initPaymentSheetParams.configuration, {}),
             customBackendUrl: Caml_option.some(hyperVal.customBackendUrl),
             publishableKey: hyperVal.publishableKey,
             clientSecret: initPaymentSheetParams.clientSecret,

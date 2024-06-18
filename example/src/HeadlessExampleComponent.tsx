@@ -1,14 +1,12 @@
 import * as React from 'react';
+import { Platform } from 'react-native';
 
-import { StyleSheet, View, Button, Text } from 'react-native';
-import { presentPaymentSheet, useHyper } from 'hyperswitch-sdk-react-native';
+import { View, Button, Text } from 'react-native';
+import { useHyper } from 'hyperswitch-sdk-react-native';
 
 export default function HeadlessExampleComponent() {
   const {
     initPaymentSession,
-    presentPaymentSheet,
-    initHeadless,
-
     getCustomerDefaultSavedPaymentMethodData,
     getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,
@@ -40,21 +38,9 @@ export default function HeadlessExampleComponent() {
   };
 
   let createPayment = async () => {
-    const { clientSecret, customerId, ephemeralKey } =
-      await fetchPaymentParams();
+    const { clientSecret } = await fetchPaymentParams();
     setClientSecret(clientSecret);
   };
-
-  // let confirmWithDefault = async () => {
-  //   console.log('called!!!!!!!!!!!!!!!!');
-  //   let params = initPaymentSession({
-  //     clientSecret: clientSecret,
-  //   });
-
-  //   const resp = await confirmWithCustomerDefaultPaymentMethod(params);
-  //   console.log('Headless example component--------', resp.message);
-  //   setResponse(JSON.stringify(resp));
-  // };
 
   let getDefaultCustomerPaymentMethod = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
@@ -157,16 +143,3 @@ export default function HeadlessExampleComponent() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});

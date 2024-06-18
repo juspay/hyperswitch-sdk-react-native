@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { Platform } from 'react-native';
 import { StyleSheet, View, Button, Text } from 'react-native';
 import { useHyper } from 'hyperswitch-sdk-react-native';
 import HeadlessExampleComponent from './HeadlessExampleComponent';
@@ -64,11 +64,11 @@ export default function PaymentScreen() {
       },
       locale: 'en',
     };
-    const googlePayParams = {
-      environment: 'test',
-      countryCode: 'US',
-      currencyCode: 'USD',
-    };
+    // const googlePayParams = {
+    //   environment: 'test',
+    //   countryCode: 'US',
+    //   currencyCode: 'USD',
+    // };
 
     const paymentSheetProps = {
       configuration: {
@@ -81,10 +81,10 @@ export default function PaymentScreen() {
       },
       clientSecret: clientSecret,
       // merchantDisplayName: '',
-      customer: {
-        id: customerId,
-        ephemeralKeySecret: ephemeralKey,
-      },
+      // customer: {
+      //   id: customerId,
+      //   ephemeralKeySecret: ephemeralKey,
+      // },
     };
 
     const paymentSheetParams = initPaymentSession(paymentSheetProps);
