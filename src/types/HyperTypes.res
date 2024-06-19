@@ -35,20 +35,22 @@ external parseConfirmResponse: Js.Dict.t<Js.Json.t> => headlessConfirmResponseTy
 
 external parseJson: Js.Dict.t<Js.Json.t> => JSON.t = "%identity"
 
+external toJsonArray: 'a => array<Js.Json.t> = "%identity"
+
 // external cardDictToObj: Js.Dict.t<Js.Json.t> => savedCard = "%identity"
-external savedPMToObj: Js.Dict.t<Js.Json.t> => savedPaymentMethodType = "%identity"
+external savedPMToObj: option<Js.Json.t> => savedPaymentMethodType = "%identity"
 
-external savedPMToArrObj: option<Js.Json.t> => array<savedPaymentMethodType> = "%identity"
+external savedPMToArrObj: array<option<Js.Json.t>> => array<savedPaymentMethodType> = "%identity"
 
-let paymentMethodItemToObjMapper = pmItem => {
-  let val = pmItem->parseJson
-  let pmDict = val->JSON.Decode.object->Option.getOr(Dict.make())
-  let pMType =
-    pmDict->Dict.get("paymentMethodType")->Option.getExn->JSON.Decode.string->Option.getOr("")
+// let paymentMethodItemToObjMapper = pmItem => {
+//   let val = pmItem->parseJson
+//   let pmDict = val->JSON.Decode.object->Option.getOr(Dict.make())
+//   let pMType =
+//     pmDict->Dict.get("paymentMethodType")->Option.getExn->JSON.Decode.string->Option.getOr("")
 
-  let pmObj = {...pmDict->savedPMToObj, paymentMethodType: pMType}
-  pmObj
-}
+//   let pmObj = {...pmDict->savedPMToObj, paymentMethodType: pMType}
+//   pmObj
+// }
 @genType
 type customerConfiguration = {
   id: option<string>,

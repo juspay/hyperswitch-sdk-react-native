@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as Js_dict from "rescript/lib/es6/js_dict.js";
+import * as Js_json from "rescript/lib/es6/js_json.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.js";
 import * as HyperProvider from "../context/HyperProvider.res.js";
@@ -11,7 +12,6 @@ function useHyper() {
   var match = React.useContext(HyperProvider.hyperProviderContext);
   var hyperVal = match[0];
   var registerHeadless = function (paySheetParams) {
-    console.log("Flow here------------>");
     HyperNativeModules.registerHeadless(paySheetParams, (function (obj) {
             console.log("called>>>>>>>.");
           }));
@@ -38,7 +38,8 @@ function useHyper() {
   var getCustomerDefaultSavedPaymentMethodData = function (paySheetParams) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
-                    resolve(arg);
+                    var val = Js_dict.get(arg, "message");
+                    resolve(val);
                   };
                   HyperNativeModules.getCustomerDefaultSavedPaymentMethodData(paySheetParams, responseResolve);
                 }));
@@ -46,7 +47,8 @@ function useHyper() {
   var getCustomerLastUsedPaymentMethodData = function (paySheetParams) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
-                    resolve(arg);
+                    var val = Js_dict.get(arg, "message");
+                    resolve(val);
                   };
                   HyperNativeModules.getCustomerLastUsedPaymentMethodData(paySheetParams, responseResolve);
                 }));
@@ -54,10 +56,10 @@ function useHyper() {
   var getCustomerSavedPaymentMethodData = function (paySheetParams) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
-                    console.log(arg);
-                    var x = Js_dict.get(arg, "paymentMethods");
-                    console.log("val-------", x);
-                    resolve(x);
+                    var savedPMJsonArr = Js_dict.get(arg, "paymentMethods").map(function (item) {
+                          return Js_dict.get(Core__Option.getOr(Js_json.decodeObject(item), {}), "message");
+                        });
+                    resolve(savedPMJsonArr);
                   };
                   HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParams, responseResolve);
                 }));
@@ -65,7 +67,6 @@ function useHyper() {
   var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
-                    console.log(arg);
                     resolve(arg);
                   };
                   HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParams, responseResolve);
@@ -74,7 +75,6 @@ function useHyper() {
   var confirmWithCustomerLastUsedPaymentMethod = function (paySheetParams) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
-                    console.log(arg);
                     resolve(arg);
                   };
                   HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParams, responseResolve);

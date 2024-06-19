@@ -27,7 +27,6 @@ let useHyper = (): useHyperReturnType => {
   let (hyperVal, _) = React.useContext(HyperProvider.hyperProviderContext)
 
   let registerHeadless = (paySheetParams: HyperTypes.sendingToRNSDK) => {
-    Console.log("Flow here------------>")
     HyperNativeModules.registerHeadless(paySheetParams->HyperTypes.parser, obj => {
       Console.log("called>>>>>>>.")
     })
@@ -57,43 +56,13 @@ let useHyper = (): useHyperReturnType => {
     })
   }
 
-  // let initHeadless = (paySheetParams: HyperTypes.sendingToRNSDK) => {
-  //   let paymentSheetParams: HyperTypes.sendingToRNSDK = {
-  //     publishableKey: hyperVal.publishableKey,
-  //     clientSecret: paySheetParams.clientSecret,
-  //     \"type": "payment",
-  //     from: "rn",
-  //     // branding: initPaymentSheetParams.branding,
-  //     // locale: initPaymentSheetParams.locale,
-  //   }
-  //   let paySheetParamsJson = paymentSheetParams->parser
-  //   Console.log2("called at RN", paySheetParamsJson)
-  //   HyperNativeModules.initHeadless(paySheetParamsJson, obj => {
-  //     Console.log2("headless ok!!!!!", obj)
-  //   })
-  // }
-  // let paymentMethodParams = () => {
-  //   Console.log("hello world")
-  // }
-
-  // let getCustomerSavedPaymentMethodData = (paySheetParams: HyperTypes.sendingToRNSDK) => {
-  //   let paySheetParamsJson = paySheetParams->parser
-
-  //   Js.Promise.make((~resolve: HyperTypes.savedPaymentMethodType => unit, ~reject as _) => {
-  //     let responseResolve = arg => {
-  //       let val = arg->HyperTypes.savedPMToObj
-  //       resolve(val)
-  //     }
-  //     HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParamsJson, responseResolve)
-  //   })
-  // }
-
   let getCustomerDefaultSavedPaymentMethodData = (paySheetParams: HyperTypes.sendingToRNSDK) => {
     let paySheetParamsJson = paySheetParams->parser
 
     Js.Promise.make((~resolve: HyperTypes.savedPaymentMethodType => unit, ~reject as _) => {
       let responseResolve = arg => {
-        let val = arg->HyperTypes.savedPMToObj
+        let val = arg->Js.Dict.get("message")->HyperTypes.savedPMToObj
+
         resolve(val)
       }
       HyperNativeModules.getCustomerDefaultSavedPaymentMethodData(
@@ -108,7 +77,8 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.savedPaymentMethodType => unit, ~reject as _) => {
       let responseResolve = arg => {
-        let val = arg->HyperTypes.savedPMToObj
+        let val = arg->Js.Dict.get("message")->HyperTypes.savedPMToObj
+
         resolve(val)
       }
       HyperNativeModules.getCustomerLastUsedPaymentMethodData(paySheetParamsJson, responseResolve)
@@ -120,12 +90,18 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: array<HyperTypes.savedPaymentMethodType> => unit, ~reject as _) => {
       let responseResolve = arg => {
-        Console.log(arg)
+        let savedPMJsonArr =
+          arg
+          ->Js.Dict.get("paymentMethods")
+          ->HyperTypes.toJsonArray
+          ->Array.map(item => {
+            item
+            ->Js.Json.decodeObject
+            ->Option.getOr(Js.Dict.empty())
+            ->Js.Dict.get("message")
+          })
 
-        let x = arg->Js.Dict.get("paymentMethods")
-        let val = x->HyperTypes.savedPMToArrObj
-        Console.log2("val-------", val)
-
+        let val = savedPMJsonArr->HyperTypes.savedPMToArrObj
         resolve(val)
       }
       HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParamsJson, responseResolve)
@@ -137,8 +113,6 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
       let responseResolve = arg => {
-        Console.log(arg)
-
         let val = arg->HyperTypes.parseConfirmResponse
 
         resolve(val)
@@ -155,8 +129,6 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
       let responseResolve = arg => {
-        Console.log(arg)
-
         let val = arg->HyperTypes.parseConfirmResponse
 
         resolve(val)

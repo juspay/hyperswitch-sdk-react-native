@@ -73,10 +73,16 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
-    const pmObj = await getCustomerSavedPaymentMethodData(params);
+    const savedPaymentMethodsArray =
+      await getCustomerSavedPaymentMethodData(params);
 
-    console.log('Headless example component--------', pmObj);
-    setResponse(`{${JSON.stringify(pmObj[0])}....}`);
+    console.log('Headless example component--------', savedPaymentMethodsArray);
+
+    savedPaymentMethodsArray.forEach((item, idx) => {
+      console.log(`${idx}---> ${item.cardHolderName}`);
+    });
+
+    setResponse(`{${JSON.stringify(savedPaymentMethodsArray[0])}....}`);
   };
 
   let confirmWithCustomerDefaultPM = async () => {
@@ -88,7 +94,7 @@ export default function HeadlessExampleComponent() {
 
     const response = await confirmWithCustomerDefaultPaymentMethod(params);
 
-    console.log('Headless example component--------', response);
+    console.log('Headless example component--------', response.message);
     setResponse(JSON.stringify(response));
   };
 
@@ -101,7 +107,7 @@ export default function HeadlessExampleComponent() {
 
     const response = await confirmWithCustomerLastUsedPaymentMethod(params);
 
-    console.log('Headless example component--------', response);
+    console.log('Headless example component--------', response.message);
     setResponse(JSON.stringify(response));
   };
 
