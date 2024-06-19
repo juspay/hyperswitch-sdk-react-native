@@ -15,6 +15,8 @@ export default function HeadlessExampleComponent() {
     // confirmWithCustomerDefaultPaymentMethod,
   } = useHyper();
 
+  const [isHeadlessInitialised, setIsHeadlessInitialised] =
+    React.useState(false);
   const [response, setResponse] = React.useState('');
 
   const [clientSecret, setClientSecret] = React.useState('');
@@ -40,6 +42,10 @@ export default function HeadlessExampleComponent() {
   let createPayment = async () => {
     const { clientSecret } = await fetchPaymentParams();
     setClientSecret(clientSecret);
+    const params = await initPaymentSession({
+      clientSecret: clientSecret,
+    });
+    setIsHeadlessInitialised(true);
   };
 
   let getDefaultCustomerPaymentMethod = async () => {
@@ -115,32 +121,37 @@ export default function HeadlessExampleComponent() {
     <View>
       <View style={{ marginTop: 50 }}>
         <Text style={{ fontSize: 20 }}>Headless Mode</Text>
-        <Button title="Create Payment" onPress={createPayment} />
+        <Button title="Init Headless" onPress={createPayment} />
         <View style={{ marginTop: 10 }} />
         <Button
           title="get Customer Default Saved Payment Method Data"
           onPress={getDefaultCustomerPaymentMethod}
+          disabled={!isHeadlessInitialised}
         />
         <View style={{ marginTop: 10 }} />
         <Button
           title="get Customer Last Used Saved Payment Method Data"
           onPress={getCustomerLastUsedPaymentMethod}
+          disabled={!isHeadlessInitialised}
         />
         <View style={{ marginTop: 10 }} />
         {/* <Button title="Confirm Payment" onPress={confirmWithDefault} /> */}
         <Button
           title="get All Saved Payment Method Data"
           onPress={getAllSavedPaymentMethodData}
+          disabled={!isHeadlessInitialised}
         />
         <View style={{ marginTop: 10 }} />
         <Button
           title="Confirm with Default Saved Payment Method"
           onPress={confirmWithCustomerDefaultPM}
+          disabled={!isHeadlessInitialised}
         />
         <View style={{ marginTop: 10 }} />
         <Button
           title="Confirm with Last Used Saved Payment Method"
           onPress={confirmWithLastUsedPM}
+          disabled={!isHeadlessInitialised}
         />
       </View>
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>

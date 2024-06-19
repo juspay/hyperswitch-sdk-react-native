@@ -5,8 +5,7 @@ import { useHyper } from 'hyperswitch-sdk-react-native';
 import HeadlessExampleComponent from './HeadlessExampleComponent';
 
 export default function PaymentScreen() {
-  const { initPaymentSession, presentPaymentSheet, registerHeadless } =
-    useHyper();
+  const { initPaymentSession, presentPaymentSheet } = useHyper();
 
   const [response, setResponse] = React.useState('');
 
@@ -87,7 +86,7 @@ export default function PaymentScreen() {
       // },
     };
 
-    const paymentSheetParams = initPaymentSession(paymentSheetProps);
+    const paymentSheetParams = await initPaymentSession(paymentSheetProps);
 
     let res = await presentPaymentSheet(paymentSheetParams);
     const stringifiedResponse = JSON.stringify(res);
@@ -97,24 +96,11 @@ export default function PaymentScreen() {
     await initializePaymentSheet();
   };
 
-  let startHeadless = async () => {
-    const { clientSecret, customerId, ephemeralKey } =
-      await fetchPaymentParams();
-
-    const paymentSheetProps = {
-      clientSecret: clientSecret,
-    };
-
-    const paymentSheetParams = initPaymentSession(paymentSheetProps);
-    registerHeadless(paymentSheetParams);
-  };
-
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 20 }}>Payment Sheet</Text>
       <Button title="Open PaymentSheet" onPress={openPaymentSheet} />
       <View style={{ marginTop: 10 }} />
-      <Button title="Register Headless" onPress={startHeadless} />
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>
         {response}
       </Text>
