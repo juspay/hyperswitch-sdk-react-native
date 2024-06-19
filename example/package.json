@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@juspay-tech/hyperswitch-node": "^1.0.3",
+    "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
+    "@react-navigation/stack": "^6.3.29",
     "@sentry/react-native": "^5.9.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

@@ -98,13 +98,11 @@ export default function PaymentScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 20 }}>Payment Sheet</Text>
       <Button title="Open PaymentSheet" onPress={openPaymentSheet} />
       <View style={{ marginTop: 10 }} />
       <Text style={{ marginTop: 40, fontWeight: 'bold', fontSize: 15 }}>
         {response}
       </Text>
-      <HeadlessExampleComponent />
     </View>
   );
 }
@@ -112,8 +110,8 @@ export default function PaymentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    margin: 10,
+    marginTop: 30,
   },
   box: {
     width: 60,
