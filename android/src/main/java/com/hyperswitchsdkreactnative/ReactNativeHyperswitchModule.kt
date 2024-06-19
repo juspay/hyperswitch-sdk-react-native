@@ -12,6 +12,7 @@ import com.juspaytech.reactnativehyperswitch.payments.gpay.GooglePayActivity
 import io.hyperswitch.PaymentMethod
 
 import io.hyperswitch.PaymentSession
+import io.hyperswitch.PaymentSessionHandler
 
 import io.hyperswitch.payments.paymentlauncher.PaymentResult
 
@@ -22,6 +23,39 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
   override fun getName(): String {
     return NAME
   }
+
+  fun callBackResultHandler(callBack: Callback, map: ReadableMap) {
+    println("called!!!!!!!")
+    try {
+      callBack.invoke(map)
+    } catch (err: RuntimeException) {
+      Log.e("Callback Log--", err.toString())
+    }
+  }
+
+
+  @ReactMethod
+  fun initPaymentSession(request: ReadableMap, callBack: Callback) {
+  Log.i("Inside InitPayentSession",request.toString())
+    val publishableKey = request.getString("publishableKey")
+
+    Companion.publishableKey=publishableKey?:""
+    val clientSecret = request.getString("clientSecret")
+    val paymentSession = PaymentSession(currentActivity as Activity, publishableKey)
+    paymentSession.initPaymentSession(clientSecret ?: "")
+    Companion.paymentSession=paymentSession
+    paymentSession.getCustomerSavedPaymentMethods {
+      Companion.paymentSessionHandler=it
+    }
+
+    val map=Arguments.createMap()
+    map.putString("type_","")
+    map.putString("code","")
+    map.putString("message","initPaymentSession successful")
+    map.putString("status","success")
+    callBack.invoke(map)
+  }
+
 
   @ReactMethod
   fun presentPaymentSheet(request: ReadableMap, callBack: Callback) {
@@ -71,7 +105,7 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
           }
 
         }
-        callBack.invoke(map)
+        callBackResultHandler(callBack, map)
 
       }
     }
@@ -116,7 +150,9 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
           }
 
         }
-        callBack.invoke(map)
+
+        callBackResultHandler(callBack, map)
+
 
       }
     }
@@ -137,13 +173,9 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
       paymentSession.getCustomerSavedPaymentMethods {
         val paymentMethods = it.getCustomerSavedPaymentMethodData()
 
-
-
-
         paymentMethods.forEach {
           println(it.toString())
         }
-
 
         val pmArray = Arguments.createArray()
 
@@ -182,7 +214,7 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
         }
 
         map.putArray("paymentMethods", pmArray)
-        callBack.invoke(map)
+        callBackResultHandler(callBack, map)
 
       }
     }
@@ -197,33 +229,35 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     val clientSecret = request.getString("clientSecret")
     val map = Arguments.createMap()
 
-    fun resultHandler(paymentResult: PaymentResult) {
-
-      when (paymentResult) {
-        is PaymentResult.Canceled -> {
-          map.putString("type", "canceled")
-          map.putString("message", paymentResult.data)
-        }
-
-        is PaymentResult.Failed -> {
-
-          map.putString("type", "failed")
-          map.putString("message", paymentResult.throwable.message ?: "")
-        }
-
-        is PaymentResult.Completed -> {
-          map.putString("type", "completed")
-          map.putString("message", paymentResult.data)
-        }
-      }
-
-      callBack.invoke(map)
-
-    }
-
     currentActivity?.runOnUiThread {
       val paymentSession = PaymentSession(currentActivity as Activity, publishableKey)
       paymentSession.initPaymentSession(clientSecret ?: "")
+
+      fun resultHandler(paymentResult: PaymentResult) {
+
+        when (paymentResult) {
+          is PaymentResult.Canceled -> {
+            map.putString("type", "canceled")
+            map.putString("message", paymentResult.data)
+          }
+
+          is PaymentResult.Failed -> {
+
+            map.putString("type", "failed")
+            map.putString("message", paymentResult.throwable.message ?: "")
+          }
+
+          is PaymentResult.Completed -> {
+            map.putString("type", "completed")
+            map.putString("message", paymentResult.data)
+          }
+        }
+
+        callBackResultHandler(callBack, map)
+
+        paymentSession.destroyInstance()
+      }
+
       paymentSession.getCustomerSavedPaymentMethods {
         val paymentMethod =
           it.confirmWithCustomerDefaultPaymentMethod(resultHandler = ::resultHandler)
@@ -262,7 +296,7 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
         }
       }
 
-      callBack.invoke(map)
+      callBackResultHandler(callBack, map)
 
     }
 
@@ -328,178 +362,8 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     val map = Arguments.createMap()
     map.putString("type_", "headlessRegistration")
     map.putString("message", "ok")
-    callBack.invoke(map)
+    callBackResultHandler(callBack, map)
 
-  }
-
-
-//  @ReactMethod
-//  fun getCustomerSavedPaymentMethodData(request: ReadableMap, callBack: Callback) {
-////    sheetCallback = callBack
-//    println("getCustomerSavedP`aymentMethodData called!!!!!!" + request)
-//
-////    val callBackMap = Arguments.createMap()
-////    reactApplicationContext.currentActivity?.runOnUiThread {
-////      println("breakpoint--" + request.getString("clientSecret"))
-////      val paymentSession = PaymentSession(
-////        reactApplicationContext.currentActivity!!,
-////        request.getString("clientSecret")!!
-////      )
-////
-////
-////      paymentSession.initPaymentSession(
-////        request.getString("clientSecret")!!,
-////        currentActivity as ReactActivity,
-////        Companion.toBundleObject(request)
-////      )
-////
-////
-////      Companion.paymentSession = paymentSession
-////
-////      paymentSession.getCustomerSavedPaymentMethods {
-////        val defaultPaymentMethod = it.getCustomerDefaultSavedPaymentMethodData()
-////
-////
-////        when (defaultPaymentMethod) {
-////          is PaymentMethod.Card -> {
-////            println(defaultPaymentMethod.toHashMap())
-////
-////            callBackMap.putString("paymentMethodType", "Card")
-////            callBackMap.putMap(
-////              "data",
-////              Arguments.makeNativeMap(defaultPaymentMethod.toHashMap())
-////            )
-////          }
-////
-////          is PaymentMethod.Wallet -> {
-////            println(defaultPaymentMethod.toHashMap())
-////            callBackMap.putString("paymentMethodType", "Wallet")
-////            callBackMap.putString(
-////              "defaultPaymentMethod",
-////              defaultPaymentMethod.toHashMap().toString()
-////            )
-////          }
-////
-////          is PaymentMethod.Error -> {
-////            println(defaultPaymentMethod.toHashMap())
-////            callBackMap.putString(
-////              "defaultPaymentMethod",
-////              defaultPaymentMethod.toHashMap().toString()
-////            )
-////          }
-////
-////
-////        }
-////
-////        callBack.invoke(callBackMap)
-////        Log.i("customer saved data", defaultPaymentMethod.toString())
-////      }
-////
-////
-////    }
-//  }
-
-//  @ReactMethod
-//  fun confirmWithCustomerDefaultPaymentMethod(request: ReadableMap, callBack: Callback) {
-////    sheetCallback = callBack
-//    println("confirmWithCustomerDefaultPaymentMethod" + request)
-//
-//
-////    reactApplicationContext.currentActivity?.runOnUiThread {
-////      val paymentSession = PaymentSession(
-////        reactApplicationContext.currentActivity!!,
-////        request.getString("clientSecret")!!
-////      )
-////
-////
-////      paymentSession.initPaymentSession(
-////        request.getString("clientSecret")!!,
-////        currentActivity as ReactActivity,
-////        Companion.toBundleObject(request)
-////      )
-////
-////      fun resultHandler(paymentResult: PaymentResult) {
-////
-////        val callBackMap = Arguments.createMap()
-////        when (paymentResult) {
-////          is PaymentResult.Canceled -> {
-////            callBackMap.putString("type", "canceled")
-////            callBackMap.putString("message", paymentResult.data)
-////
-////          }
-////
-////          is PaymentResult.Failed -> {
-////
-////            callBackMap.putString("type", "failed")
-////            callBackMap.putString("message", paymentResult.throwable.message ?: "")
-////          }
-////
-////          is PaymentResult.Completed -> {
-////            callBackMap.putString("type", "completed")
-////            callBackMap.putString("message", paymentResult.data)
-////
-////          }
-////
-////        }
-////        callBack.invoke(callBackMap)
-////      }
-////      Companion.paymentSession = paymentSession
-////
-////      paymentSession.getCustomerSavedPaymentMethods {
-////        it.confirmWithCustomerDefaultPaymentMethod(resultHandler = ::resultHandler)
-////      }
-////    }
-//  }
-
-  @ReactMethod
-  fun initHeadless(request: ReadableMap, callBack: Callback) {
-
-//    sheetCallback = callBack
-//    println("requestObj-----" + request)
-//    Companion.publishableKey = "pk_snd_3b33cd9404234113804aa1accaabe22f"
-//
-//    println("headless init--->" + request)
-//
-//    reactApplicationContext.currentActivity?.runOnUiThread {
-//      println("breakpoint--" + request.getString("clientSecret"))
-//      val paymentSession = PaymentSession(
-//        reactApplicationContext.currentActivity!!,
-//        request.getString("clientSecret")!!
-//      )
-//
-//
-//      paymentSession.initPaymentSession(
-//        request.getString("clientSecret")!!,
-//        currentActivity as ReactActivity,
-//        Companion.toBundleObject(request)
-//      )
-//
-//
-//      Companion.paymentSession = paymentSession
-//
-//      paymentSession.getCustomerSavedPaymentMethods {
-//        val x = it.getCustomerSavedPaymentMethodData()
-//        val y = it.getCustomerDefaultSavedPaymentMethodData()
-//
-//        when (y) {
-//          is PaymentMethod.Card -> {
-//            println(y.toHashMap())
-//          }
-//
-//          is PaymentMethod.Wallet -> {
-//            println(y.toHashMap())
-//          }
-//
-//          is PaymentMethod.Error -> {
-//            println(y.toHashMap())
-//          }
-//
-//
-//        }
-//
-//        Log.i("customer saved data", x.toString())
-//      }
-//    }
   }
 
 
@@ -517,8 +381,7 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
   fun gPayWalletCall(gPayRequest: String, callback: Callback) {
     googlePayCallback = callback
     val myIntent = Intent(
-      currentActivity,
-      GooglePayActivity::class.java
+      currentActivity, GooglePayActivity::class.java
     )
     myIntent.putExtra("gPayRequest", gPayRequest)
     currentActivity?.startActivity(myIntent)
@@ -556,6 +419,12 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     const val NAME = "HyperModule"
 
     @JvmStatic
+    lateinit var paymentSession: PaymentSession
+
+    @JvmStatic
+    lateinit var paymentSessionHandler:PaymentSessionHandler
+
+    @JvmStatic
     lateinit var googlePayCallback: Callback
 
     @JvmStatic
@@ -564,8 +433,7 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     @JvmStatic
     lateinit var publishableKey: String
 
-    @JvmStatic
-    lateinit var paymentSession: PaymentSession
+
 
     private fun toBundleObject(readableMap: ReadableMap?): Bundle {
       val result = Bundle()

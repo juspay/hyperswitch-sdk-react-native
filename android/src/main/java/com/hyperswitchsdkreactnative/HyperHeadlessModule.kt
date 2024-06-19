@@ -35,7 +35,14 @@ class HyperHeadlessModule internal constructor(rct: ReactApplicationContext) : R
   @ReactMethod
   fun getPaymentSession(getPaymentMethodData: ReadableMap, getPaymentMethodData2: ReadableMap, getPaymentMethodDataArray: ReadableArray, callback: Callback) {
     // Call the getPaymentSession method from PaymentSession singleton
-    PaymentSession.getPaymentSession(getPaymentMethodData, getPaymentMethodData2, getPaymentMethodDataArray, callback)
+    if (PaymentSession.completion != null) {
+      PaymentSession.getPaymentSession(
+        getPaymentMethodData,
+        getPaymentMethodData2,
+        getPaymentMethodDataArray,
+        callback
+      )
+    }
   }
 
   // Method to exit the headless mode

@@ -11,9 +11,8 @@ let hyperswitchDict =
 Console.log2("hyperswitch dict------>", hyperswitchDict)
 
 type hyperswitch = {
+  initPaymentSession: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   presentPaymentSheet: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
-  initHeadless: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
-  registerHeadless: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerDefaultSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerLastUsedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
@@ -40,10 +39,8 @@ let getStrFunWithCallbackFromKey = key => {
 }
 
 let hyperswitch = {
-  //   Console.log(getStrFunWithCallbackFromKey("presentPaymentSheet"))
+  initPaymentSession: getJsonFunWithCallbackFromKey("initPaymentSession"),
   presentPaymentSheet: getJsonFunWithCallbackFromKey("presentPaymentSheet"),
-  initHeadless: getJsonFunWithCallbackFromKey("initHeadless"),
-  registerHeadless: getJsonFunWithCallbackFromKey("registerHeadless"),
   getCustomerDefaultSavedPaymentMethodData: getJsonFunWithCallbackFromKey(
     "getCustomerDefaultSavedPaymentMethodData",
   ),
@@ -62,19 +59,14 @@ let hyperswitch = {
   confirmWithCustomerPaymentToken: getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken"),
 }
 
+let initPaymentSession = (requestObj: Js.Json.t, callback) => {
+  Console.log("init payment Session Native module rn wrapper ")
+  hyperswitch.initPaymentSession(requestObj, callback)
+}
 let presentPaymentSheet = (requestObj: Js.Json.t, callback) => {
   Console.log2("reaching here------", requestObj)
   // Console.log2("present fn==", hyperswitch.presentPaymentSheet)
   hyperswitch.presentPaymentSheet(requestObj, callback)
-}
-
-let initHeadless = (requestObj: Js.Json.t, callback) => {
-  hyperswitch.initHeadless(requestObj, callback)
-}
-
-let registerHeadless = (requestObj: Js.Json.t, callback) => {
-  Console.log2(">>>>>>>>>>><<<<<<<<<", hyperswitch.registerHeadless)
-  hyperswitch.registerHeadless(requestObj, callback)
 }
 
 let getCustomerDefaultSavedPaymentMethodData = (requestObj: Js.Json.t, callback) => {

@@ -11,20 +11,26 @@ import * as HyperNativeModules from "../nativeModules/HyperNativeModules.res.js"
 function useHyper() {
   var match = React.useContext(HyperProvider.hyperProviderContext);
   var hyperVal = match[0];
-  var registerHeadless = function (paySheetParams) {
-    HyperNativeModules.registerHeadless(paySheetParams, (function (obj) {
-            console.log("called>>>>>>>.");
-          }));
-  };
   var initPaymentSession = function (initPaymentSheetParams) {
-    return {
-            configuration: Core__Option.getOr(initPaymentSheetParams.configuration, {}),
-            customBackendUrl: Caml_option.some(hyperVal.customBackendUrl),
-            publishableKey: hyperVal.publishableKey,
-            clientSecret: initPaymentSheetParams.clientSecret,
-            type: "payment",
-            from: "rn"
-          };
+    var hsSdkParams_configuration = Core__Option.getOr(initPaymentSheetParams.configuration, {});
+    var hsSdkParams_customBackendUrl = Caml_option.some(hyperVal.customBackendUrl);
+    var hsSdkParams_publishableKey = hyperVal.publishableKey;
+    var hsSdkParams_clientSecret = initPaymentSheetParams.clientSecret;
+    var hsSdkParams = {
+      configuration: hsSdkParams_configuration,
+      customBackendUrl: hsSdkParams_customBackendUrl,
+      publishableKey: hsSdkParams_publishableKey,
+      clientSecret: hsSdkParams_clientSecret,
+      type: "payment",
+      from: "rn"
+    };
+    return new Promise((function (resolve, param) {
+                  var responseResolve = function (arg) {
+                    console.log("From RN Native module", arg);
+                    resolve(hsSdkParams);
+                  };
+                  HyperNativeModules.initPaymentSession(hsSdkParams, responseResolve);
+                }));
   };
   var presentPaymentSheet = function (paySheetParams) {
     return new Promise((function (resolve, param) {
@@ -83,7 +89,6 @@ function useHyper() {
   return {
           initPaymentSession: initPaymentSession,
           presentPaymentSheet: presentPaymentSheet,
-          registerHeadless: registerHeadless,
           getCustomerDefaultSavedPaymentMethodData: getCustomerDefaultSavedPaymentMethodData,
           getCustomerLastUsedPaymentMethodData: getCustomerLastUsedPaymentMethodData,
           getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData,

@@ -81,7 +81,7 @@ class PaymentSession {
         packages.add(ReactNativeHyperswitchPackage())
 
         reactInstanceManager = ReactInstanceManager.builder()
-          .setApplication(activity?.application)
+          .setApplication(activity.application)
           .setCurrentActivity(activity)
           .addPackages(packages)
           .setBundleAssetName("hyperswitch.bundle")
@@ -185,13 +185,18 @@ class PaymentSession {
       val reactContext = reactInstanceManager!!.currentReactContext
 
       activity.runOnUiThread {
-        if (reactContext == null || !reactContext.hasCatalystInstance()) {
+//        if (reactContext == null || !reactContext.hasCatalystInstance()) {
           reactInstanceManager!!.createReactContextInBackground()
-        } else {
-          reactInstanceManager!!.recreateReactContextInBackground()
-        }
+//        } else {
+//          reactInstanceManager!!.recreateReactContextInBackground()
+//        }
       }
     }
+  }
+
+  fun destroyInstance() {
+    println("my destroy called>>>>>>>>>>>>>>>>>>>>>")
+    completion = null
   }
 
   companion object {
@@ -335,8 +340,8 @@ class PaymentSession {
 
         else -> headlessCompletion?.let { it(PaymentResult.Completed(status ?: "default")) }
       }
-      // reactInstanceManager?.currentReactContext?.destroy()
-      // reactInstanceManager?.destroy()
+//       reactInstanceManager?.currentReactContext?.destroy()
+//       reactInstanceManager?.destroy()
     }
   }
 }

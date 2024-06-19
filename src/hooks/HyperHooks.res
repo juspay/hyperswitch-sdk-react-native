@@ -2,9 +2,8 @@ external parser: HyperTypes.sendingToRNSDK => Js.Json.t = "%identity"
 
 @genType
 type useHyperReturnType = {
-  initPaymentSession: HyperTypes.initPaymentSheetParamTypes => HyperTypes.sendingToRNSDK,
+  initPaymentSession: HyperTypes.initPaymentSheetParamTypes => promise<HyperTypes.sendingToRNSDK>,
   presentPaymentSheet: HyperTypes.sendingToRNSDK => promise<HyperTypes.responseFromNativeModule>,
-  registerHeadless: HyperTypes.sendingToRNSDK => unit,
   getCustomerDefaultSavedPaymentMethodData: HyperTypes.sendingToRNSDK => promise<
     HyperTypes.savedPaymentMethodType,
   >,
@@ -26,12 +25,6 @@ type useHyperReturnType = {
 let useHyper = (): useHyperReturnType => {
   let (hyperVal, _) = React.useContext(HyperProvider.hyperProviderContext)
 
-  let registerHeadless = (paySheetParams: HyperTypes.sendingToRNSDK) => {
-    HyperNativeModules.registerHeadless(paySheetParams->HyperTypes.parser, obj => {
-      Console.log("called>>>>>>>.")
-    })
-  }
-
   let initPaymentSession = (initPaymentSheetParams: HyperTypes.initPaymentSheetParamTypes) => {
     let hsSdkParams: HyperTypes.sendingToRNSDK = {
       configuration: initPaymentSheetParams.configuration->Option.getOr({}),
@@ -41,7 +34,14 @@ let useHyper = (): useHyperReturnType => {
       \"type": "payment",
       from: "rn",
     }
-    hsSdkParams
+
+    Js.Promise.make((~resolve: HyperTypes.sendingToRNSDK => unit, ~reject as _) => {
+      let responseResolve = arg => {
+        Console.log2("From RN Native module", arg)
+        resolve(hsSdkParams)
+      }
+      HyperNativeModules.initPaymentSession(hsSdkParams->HyperTypes.parser, responseResolve)
+    })
   }
 
   let presentPaymentSheet = (paySheetParams: HyperTypes.sendingToRNSDK) => {
@@ -143,7 +143,6 @@ let useHyper = (): useHyperReturnType => {
   {
     initPaymentSession,
     presentPaymentSheet,
-    registerHeadless,
     getCustomerDefaultSavedPaymentMethodData,
     getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,

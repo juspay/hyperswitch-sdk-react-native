@@ -45,7 +45,7 @@ export default function HeadlessExampleComponent() {
   let getDefaultCustomerPaymentMethod = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
 
-    let params = initPaymentSession({
+    let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
 
@@ -57,7 +57,7 @@ export default function HeadlessExampleComponent() {
   let getCustomerLastUsedPaymentMethod = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
 
-    let params = initPaymentSession({
+    let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
 
@@ -69,7 +69,7 @@ export default function HeadlessExampleComponent() {
   let getAllSavedPaymentMethodData = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
 
-    let params = initPaymentSession({
+    let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
 
@@ -88,7 +88,7 @@ export default function HeadlessExampleComponent() {
   let confirmWithCustomerDefaultPM = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
 
-    let params = initPaymentSession({
+    let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
 
@@ -101,7 +101,7 @@ export default function HeadlessExampleComponent() {
   let confirmWithLastUsedPM = async () => {
     console.log('called!!!!!!!!!!!!!!!!');
 
-    let params = initPaymentSession({
+    let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
 

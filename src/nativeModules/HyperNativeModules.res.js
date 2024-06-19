@@ -31,11 +31,9 @@ function getStrFunWithCallbackFromKey(key) {
   }
 }
 
+var hyperswitch_initPaymentSession = getJsonFunWithCallbackFromKey("initPaymentSession");
+
 var hyperswitch_presentPaymentSheet = getJsonFunWithCallbackFromKey("presentPaymentSheet");
-
-var hyperswitch_initHeadless = getJsonFunWithCallbackFromKey("initHeadless");
-
-var hyperswitch_registerHeadless = getJsonFunWithCallbackFromKey("registerHeadless");
 
 var hyperswitch_getCustomerDefaultSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerDefaultSavedPaymentMethodData");
 
@@ -50,9 +48,8 @@ var hyperswitch_confirmWithCustomerLastUsedPaymentMethod = getJsonFunWithCallbac
 var hyperswitch_confirmWithCustomerPaymentToken = getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken");
 
 var hyperswitch = {
+  initPaymentSession: hyperswitch_initPaymentSession,
   presentPaymentSheet: hyperswitch_presentPaymentSheet,
-  initHeadless: hyperswitch_initHeadless,
-  registerHeadless: hyperswitch_registerHeadless,
   getCustomerDefaultSavedPaymentMethodData: hyperswitch_getCustomerDefaultSavedPaymentMethodData,
   getCustomerLastUsedPaymentMethodData: hyperswitch_getCustomerLastUsedPaymentMethodData,
   getCustomerSavedPaymentMethodData: hyperswitch_getCustomerSavedPaymentMethodData,
@@ -61,18 +58,14 @@ var hyperswitch = {
   confirmWithCustomerPaymentToken: hyperswitch_confirmWithCustomerPaymentToken
 };
 
+function initPaymentSession(requestObj, callback) {
+  console.log("init payment Session Native module rn wrapper ");
+  hyperswitch_initPaymentSession(requestObj, callback);
+}
+
 function presentPaymentSheet(requestObj, callback) {
   console.log("reaching here------", requestObj);
   hyperswitch_presentPaymentSheet(requestObj, callback);
-}
-
-function initHeadless(requestObj, callback) {
-  hyperswitch_initHeadless(requestObj, callback);
-}
-
-function registerHeadless(requestObj, callback) {
-  console.log(">>>>>>>>>>><<<<<<<<<", hyperswitch_registerHeadless);
-  hyperswitch_registerHeadless(requestObj, callback);
 }
 
 function getCustomerDefaultSavedPaymentMethodData(requestObj, callback) {
@@ -100,9 +93,8 @@ export {
   getJsonFunWithCallbackFromKey ,
   getStrFunWithCallbackFromKey ,
   hyperswitch ,
+  initPaymentSession ,
   presentPaymentSheet ,
-  initHeadless ,
-  registerHeadless ,
   getCustomerDefaultSavedPaymentMethodData ,
   getCustomerLastUsedPaymentMethodData ,
   getCustomerSavedPaymentMethodData ,
