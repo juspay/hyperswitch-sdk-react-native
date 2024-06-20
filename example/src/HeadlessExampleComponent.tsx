@@ -97,10 +97,10 @@ export default function HeadlessExampleComponent() {
     setShowLoader(true);
 
     if (savedPaymentSession != null) {
-      const response = await confirmWithCustomerDefaultPaymentMethod(
-        savedPaymentSession,
-        '123'
-      );
+      const response = await confirmWithCustomerDefaultPaymentMethod({
+        sessionParams: savedPaymentSession,
+        cvc: '124',
+      });
 
       setResponse(JSON.stringify(response));
       setShowLoader(false);
@@ -112,10 +112,9 @@ export default function HeadlessExampleComponent() {
     setShowLoader(true);
 
     if (savedPaymentSession != null) {
-      const response = await confirmWithCustomerLastUsedPaymentMethod(
-        savedPaymentSession,
-        '424'
-      );
+      const response = await confirmWithCustomerLastUsedPaymentMethod({
+        sessionParams: savedPaymentSession,
+      });
 
       setResponse(JSON.stringify(response));
       setShowLoader(false);
@@ -127,11 +126,11 @@ export default function HeadlessExampleComponent() {
     setShowLoader(true);
 
     if (savedPaymentSession != null) {
-      const response = await confirmWithCustomerPaymentToken(
-        savedPaymentSession,
-        '424',
-        'CUSTOMER_PAYMENT_TOKEN'
-      );
+      const response = await confirmWithCustomerPaymentToken({
+        sessionParams: savedPaymentSession,
+        cvc: '424',
+        paymentToken: 'CUSTOMER_PAYMENT_TOKEN',
+      });
 
       setResponse(JSON.stringify(response));
       setShowLoader(false);

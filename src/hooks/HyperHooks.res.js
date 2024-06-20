@@ -78,28 +78,31 @@ function useHyper() {
                   HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParams, responseResolve);
                 }));
   };
-  var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams, cvc) {
+  var confirmWithCustomerDefaultPaymentMethod = function ($$arguments) {
+    var paySheetParamsJson = $$arguments.sessionParams;
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
                     resolve(arg);
                   };
-                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParams, cvc, responseResolve);
+                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParamsJson, $$arguments.cvc, responseResolve);
                 }));
   };
-  var confirmWithCustomerLastUsedPaymentMethod = function (paySheetParams, cvc) {
+  var confirmWithCustomerLastUsedPaymentMethod = function ($$arguments) {
+    var paySheetParamsJson = $$arguments.sessionParams;
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
                     resolve(arg);
                   };
-                  HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParams, cvc, responseResolve);
+                  HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParamsJson, $$arguments.cvc, responseResolve);
                 }));
   };
-  var confirmWithCustomerPaymentToken = function (paySheetParams, cvc, paymentToken) {
+  var confirmWithCustomerPaymentToken = function ($$arguments) {
+    var paySheetParamsJson = $$arguments.sessionParams;
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
                     resolve(arg);
                   };
-                  HyperNativeModules.confirmWithCustomerPaymentToken(paySheetParams, cvc, paymentToken, responseResolve);
+                  HyperNativeModules.confirmWithCustomerPaymentToken(paySheetParamsJson, $$arguments.cvc, $$arguments.paymentToken, responseResolve);
                 }));
   };
   return {

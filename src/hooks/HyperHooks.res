@@ -1,5 +1,15 @@
 external parser: HyperTypes.sessionParams => Js.Json.t = "%identity"
 
+type confirmPaymentMethodArgumentType = {
+  sessionParams: HyperTypes.sessionParams,
+  cvc?: string,
+}
+type confirmWithCustomerPaymentTokenArgumentType = {
+  sessionParams: HyperTypes.sessionParams,
+  cvc?: string,
+  paymentToken: string,
+}
+
 @genType
 type useHyperReturnType = {
   initPaymentSession: HyperTypes.initPaymentSheetParamTypes => promise<HyperTypes.sessionParams>,
@@ -14,19 +24,15 @@ type useHyperReturnType = {
   getCustomerSavedPaymentMethodData: HyperTypes.sessionParams => promise<
     array<HyperTypes.savedPaymentMethodType>,
   >,
-  confirmWithCustomerDefaultPaymentMethod: (
-    HyperTypes.sessionParams,
-    option<string>,
-  ) => promise<HyperTypes.headlessConfirmResponseType>,
-  confirmWithCustomerLastUsedPaymentMethod: (
-    HyperTypes.sessionParams,
-    option<string>,
-  ) => promise<HyperTypes.headlessConfirmResponseType>,
-  confirmWithCustomerPaymentToken: (
-    HyperTypes.sessionParams,
-    option<string>,
-    string,
-  ) => promise<HyperTypes.headlessConfirmResponseType>,
+  confirmWithCustomerDefaultPaymentMethod: confirmPaymentMethodArgumentType => promise<
+    HyperTypes.headlessConfirmResponseType,
+  >,
+  confirmWithCustomerLastUsedPaymentMethod: confirmPaymentMethodArgumentType => promise<
+    HyperTypes.headlessConfirmResponseType,
+  >,
+  confirmWithCustomerPaymentToken: confirmWithCustomerPaymentTokenArgumentType => promise<
+    HyperTypes.headlessConfirmResponseType,
+  >,
 }
 
 @genType
@@ -126,11 +132,8 @@ let useHyper = (): useHyperReturnType => {
     })
   }
 
-  let confirmWithCustomerDefaultPaymentMethod = (
-    paySheetParams: HyperTypes.sessionParams,
-    cvc: option<string>,
-  ) => {
-    let paySheetParamsJson = paySheetParams->parser
+  let confirmWithCustomerDefaultPaymentMethod = (arguments: confirmPaymentMethodArgumentType) => {
+    let paySheetParamsJson = arguments.sessionParams->parser
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
       let responseResolve = arg => {
@@ -140,17 +143,14 @@ let useHyper = (): useHyperReturnType => {
       }
       HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(
         paySheetParamsJson,
-        cvc,
+        arguments.cvc,
         responseResolve,
       )
     })
   }
 
-  let confirmWithCustomerLastUsedPaymentMethod = (
-    paySheetParams: HyperTypes.sessionParams,
-    cvc: option<string>,
-  ) => {
-    let paySheetParamsJson = paySheetParams->parser
+  let confirmWithCustomerLastUsedPaymentMethod = (arguments: confirmPaymentMethodArgumentType) => {
+    let paySheetParamsJson = arguments.sessionParams->parser
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
       let responseResolve = arg => {
@@ -160,18 +160,16 @@ let useHyper = (): useHyperReturnType => {
       }
       HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(
         paySheetParamsJson,
-        cvc,
+        arguments.cvc,
         responseResolve,
       )
     })
   }
 
   let confirmWithCustomerPaymentToken = (
-    paySheetParams: HyperTypes.sessionParams,
-    cvc: option<string>,
-    paymentToken: string,
+    arguments: confirmWithCustomerPaymentTokenArgumentType,
   ) => {
-    let paySheetParamsJson = paySheetParams->parser
+    let paySheetParamsJson = arguments.sessionParams->parser
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
       let responseResolve = arg => {
@@ -181,8 +179,8 @@ let useHyper = (): useHyperReturnType => {
       }
       HyperNativeModules.confirmWithCustomerPaymentToken(
         paySheetParamsJson,
-        cvc,
-        paymentToken,
+        arguments.cvc,
+        arguments.paymentToken,
         responseResolve,
       )
     })
