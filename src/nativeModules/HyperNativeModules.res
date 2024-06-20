@@ -1,7 +1,9 @@
 type jsonFunWithCallback = (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit
 type strFunWithCallback = (Js.Json.t, option<string>, Js.Dict.t<Js.Json.t> => unit) => unit
+type strFun2WithCallback = (Js.Json.t, option<string>, string, Js.Dict.t<Js.Json.t> => unit) => unit
 external jsonToJsonFunWithCallback: Js.Json.t => jsonFunWithCallback = "%identity"
 external jsonToStrFunWithCallback: Js.Json.t => strFunWithCallback = "%identity"
+external jsonToStr2FunWithCallback: Js.Json.t => strFun2WithCallback = "%identity"
 
 let hyperswitchDict =
   Js.Dict.get(ReactNative.NativeModules.nativeModules, "HyperModule")
@@ -27,7 +29,12 @@ type hyperswitch = {
     option<string>,
     Js.Dict.t<Js.Json.t> => unit,
   ) => unit,
-  confirmWithCustomerPaymentToken: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
+  confirmWithCustomerPaymentToken: (
+    Js.Json.t,
+    option<string>,
+    string,
+    Js.Dict.t<Js.Json.t> => unit,
+  ) => unit,
 }
 
 let getJsonFunWithCallbackFromKey = key => {
@@ -47,6 +54,12 @@ let getStrFunWithCallbackFromKey = key => {
   }
 }
 
+let getStr2FunWithCallbackFromKey = key => {
+  switch hyperswitchDict->Dict.get(key) {
+  | Some(json) => jsonToStr2FunWithCallback(json)
+  | None => (_, _, _, _) => ()
+  }
+}
 let hyperswitch = {
   initPaymentSession: getJsonFunWithCallbackFromKey("initPaymentSession"),
   presentPaymentSheet: getJsonFunWithCallbackFromKey("presentPaymentSheet"),
@@ -66,7 +79,7 @@ let hyperswitch = {
   confirmWithCustomerLastUsedPaymentMethod: getStrFunWithCallbackFromKey(
     "confirmWithCustomerLastUsedPaymentMethod",
   ),
-  confirmWithCustomerPaymentToken: getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken"),
+  confirmWithCustomerPaymentToken: getStr2FunWithCallbackFromKey("confirmWithCustomerPaymentToken"),
 }
 
 let initPaymentSession = (requestObj: Js.Json.t, callback) => {
@@ -110,4 +123,13 @@ let confirmWithCustomerLastUsedPaymentMethod = (
   callback,
 ) => {
   hyperswitch.confirmWithCustomerLastUsedPaymentMethod(requestObj, cvc, callback)
+}
+
+let confirmWithCustomerPaymentToken = (
+  requestObj: Js.Json.t,
+  cvc: option<string>,
+  paymentToken: string,
+  callback,
+) => {
+  hyperswitch.confirmWithCustomerPaymentToken(requestObj, cvc, paymentToken, callback)
 }

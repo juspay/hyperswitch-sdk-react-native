@@ -23,7 +23,8 @@ export type useHyperReturnType = {
   readonly getCustomerLastUsedPaymentMethodData: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_savedPaymentMethodType>; 
   readonly getCustomerSavedPaymentMethodData: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_savedPaymentMethodType[]>; 
   readonly confirmWithCustomerDefaultPaymentMethod: (_1:HyperTypes_sendingToRNSDK, _2:(undefined | string)) => Promise<HyperTypes_headlessConfirmResponseType>; 
-  readonly confirmWithCustomerLastUsedPaymentMethod: (_1:HyperTypes_sendingToRNSDK, _2:(undefined | string)) => Promise<HyperTypes_headlessConfirmResponseType>
+  readonly confirmWithCustomerLastUsedPaymentMethod: (_1:HyperTypes_sendingToRNSDK, _2:(undefined | string)) => Promise<HyperTypes_headlessConfirmResponseType>; 
+  readonly confirmWithCustomerPaymentToken: (_1:HyperTypes_sendingToRNSDK, _2:(undefined | string), _3:string) => Promise<HyperTypes_headlessConfirmResponseType>
 };
 
 export const useHyper: () => useHyperReturnType = HyperHooksJS.useHyper as any;

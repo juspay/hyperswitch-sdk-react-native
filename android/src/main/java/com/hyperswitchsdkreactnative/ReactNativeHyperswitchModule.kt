@@ -318,6 +318,48 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
 
   }
 
+  @ReactMethod
+  fun confirmWithCustomerPaymentToken(request: ReadableMap,cvc:String?=null,paymentToken:String, callBack: Callback) {
+
+    Log.i("Register Headless", "called on Native Side")
+    val publishableKey = request.getString("publishableKey")
+    val clientSecret = request.getString("clientSecret")
+    val map = Arguments.createMap()
+
+
+
+    currentActivity?.runOnUiThread {
+
+      fun resultHandler(paymentResult: PaymentResult) {
+
+        when (paymentResult) {
+          is PaymentResult.Canceled -> {
+            map.putString("type", "canceled")
+            map.putString("message", paymentResult.data)
+          }
+
+          is PaymentResult.Failed -> {
+
+            map.putString("type", "failed")
+            map.putString("message", paymentResult.throwable.message ?: "")
+          }
+
+          is PaymentResult.Completed -> {
+            map.putString("type", "completed")
+            map.putString("message", paymentResult.data)
+          }
+        }
+
+        callBackResultHandler(callBack, map)
+        paymentSession.destroyInstance()
+
+      }
+      Companion.paymentSessionHandler.confirmWithCustomerPaymentToken(cvc=cvc, paymentToken = paymentToken,resultHandler = ::resultHandler)
+    }
+
+  }
+
+
 
 //  @ReactMethod
 //  fun registerHeadless(request: ReadableMap, callBack: Callback) {

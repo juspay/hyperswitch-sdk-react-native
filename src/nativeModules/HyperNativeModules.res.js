@@ -31,6 +31,17 @@ function getStrFunWithCallbackFromKey(key) {
   }
 }
 
+function getStr2FunWithCallbackFromKey(key) {
+  var json = hyperswitchDict[key];
+  if (json !== undefined) {
+    return json;
+  } else {
+    return function (param, param$1, param$2, param$3) {
+      
+    };
+  }
+}
+
 var hyperswitch_initPaymentSession = getJsonFunWithCallbackFromKey("initPaymentSession");
 
 var hyperswitch_presentPaymentSheet = getJsonFunWithCallbackFromKey("presentPaymentSheet");
@@ -47,7 +58,7 @@ var hyperswitch_confirmWithCustomerDefaultPaymentMethod = getStrFunWithCallbackF
 
 var hyperswitch_confirmWithCustomerLastUsedPaymentMethod = getStrFunWithCallbackFromKey("confirmWithCustomerLastUsedPaymentMethod");
 
-var hyperswitch_confirmWithCustomerPaymentToken = getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken");
+var hyperswitch_confirmWithCustomerPaymentToken = getStr2FunWithCallbackFromKey("confirmWithCustomerPaymentToken");
 
 var hyperswitch = {
   initPaymentSession: hyperswitch_initPaymentSession,
@@ -96,10 +107,15 @@ function confirmWithCustomerLastUsedPaymentMethod(requestObj, cvc, callback) {
   hyperswitch_confirmWithCustomerLastUsedPaymentMethod(requestObj, cvc, callback);
 }
 
+function confirmWithCustomerPaymentToken(requestObj, cvc, paymentToken, callback) {
+  hyperswitch_confirmWithCustomerPaymentToken(requestObj, cvc, paymentToken, callback);
+}
+
 export {
   hyperswitchDict ,
   getJsonFunWithCallbackFromKey ,
   getStrFunWithCallbackFromKey ,
+  getStr2FunWithCallbackFromKey ,
   hyperswitch ,
   initPaymentSession ,
   getCustomerSavedPaymentMethods ,
@@ -109,5 +125,6 @@ export {
   getCustomerSavedPaymentMethodData ,
   confirmWithCustomerDefaultPaymentMethod ,
   confirmWithCustomerLastUsedPaymentMethod ,
+  confirmWithCustomerPaymentToken ,
 }
 /* hyperswitchDict Not a pure module */

@@ -13,7 +13,7 @@ export default function HeadlessExampleComponent() {
     getCustomerSavedPaymentMethodData,
     confirmWithCustomerDefaultPaymentMethod,
     confirmWithCustomerLastUsedPaymentMethod,
-    // confirmWithCustomerDefaultPaymentMethod,
+    confirmWithCustomerPaymentToken,
   } = useHyper();
 
   const [isHeadlessInitialised, setIsHeadlessInitialised] =
@@ -142,6 +142,26 @@ export default function HeadlessExampleComponent() {
     setIsHeadlessInitialised(false);
   };
 
+  let confirmWithPaymentToken = async () => {
+    setShowLoader(true);
+    let params = await initPaymentSession({
+      clientSecret: clientSecret,
+    });
+
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+
+    const response = await confirmWithCustomerPaymentToken(
+      savedPaymentSession,
+      '424',
+      'CUSTOMER_PAYMENT_TOKEN'
+    );
+
+    console.log('Headless example component--------', response.message);
+    setResponse(JSON.stringify(response));
+    setShowLoader(false);
+    setIsHeadlessInitialised(false);
+  };
+
   return (
     <View style={{ margin: 10 }}>
       <View style={{ marginTop: 50 }}>
@@ -175,6 +195,12 @@ export default function HeadlessExampleComponent() {
         <Button
           title="Confirm with Last Used Saved Payment Method"
           onPress={confirmWithLastUsedPM}
+          disabled={!isHeadlessInitialised}
+        />
+        <View style={{ marginTop: 10 }} />
+        <Button
+          title="Confirm with Payment Token"
+          onPress={confirmWithPaymentToken}
           disabled={!isHeadlessInitialised}
         />
       </View>

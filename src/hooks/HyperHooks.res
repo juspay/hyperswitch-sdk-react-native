@@ -22,6 +22,11 @@ type useHyperReturnType = {
     HyperTypes.sendingToRNSDK,
     option<string>,
   ) => promise<HyperTypes.headlessConfirmResponseType>,
+  confirmWithCustomerPaymentToken: (
+    HyperTypes.sendingToRNSDK,
+    option<string>,
+    string,
+  ) => promise<HyperTypes.headlessConfirmResponseType>,
 }
 
 @genType
@@ -161,6 +166,28 @@ let useHyper = (): useHyperReturnType => {
     })
   }
 
+  let confirmWithCustomerPaymentToken = (
+    paySheetParams: HyperTypes.sendingToRNSDK,
+    cvc: option<string>,
+    paymentToken: string,
+  ) => {
+    let paySheetParamsJson = paySheetParams->parser
+
+    Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
+      let responseResolve = arg => {
+        let val = arg->HyperTypes.parseConfirmResponse
+
+        resolve(val)
+      }
+      HyperNativeModules.confirmWithCustomerPaymentToken(
+        paySheetParamsJson,
+        cvc,
+        paymentToken,
+        responseResolve,
+      )
+    })
+  }
+
   {
     initPaymentSession,
     presentPaymentSheet,
@@ -170,5 +197,6 @@ let useHyper = (): useHyperReturnType => {
     getCustomerSavedPaymentMethodData,
     confirmWithCustomerDefaultPaymentMethod,
     confirmWithCustomerLastUsedPaymentMethod,
+    confirmWithCustomerPaymentToken,
   }
 }

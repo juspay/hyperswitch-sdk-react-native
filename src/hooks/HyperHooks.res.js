@@ -94,6 +94,14 @@ function useHyper() {
                   HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParams, cvc, responseResolve);
                 }));
   };
+  var confirmWithCustomerPaymentToken = function (paySheetParams, cvc, paymentToken) {
+    return new Promise((function (resolve, param) {
+                  var responseResolve = function (arg) {
+                    resolve(arg);
+                  };
+                  HyperNativeModules.confirmWithCustomerPaymentToken(paySheetParams, cvc, paymentToken, responseResolve);
+                }));
+  };
   return {
           initPaymentSession: initPaymentSession,
           presentPaymentSheet: presentPaymentSheet,
@@ -102,7 +110,8 @@ function useHyper() {
           getCustomerLastUsedPaymentMethodData: getCustomerLastUsedPaymentMethodData,
           getCustomerSavedPaymentMethodData: getCustomerSavedPaymentMethodData,
           confirmWithCustomerDefaultPaymentMethod: confirmWithCustomerDefaultPaymentMethod,
-          confirmWithCustomerLastUsedPaymentMethod: confirmWithCustomerLastUsedPaymentMethod
+          confirmWithCustomerLastUsedPaymentMethod: confirmWithCustomerLastUsedPaymentMethod,
+          confirmWithCustomerPaymentToken: confirmWithCustomerPaymentToken
         };
 }
 
