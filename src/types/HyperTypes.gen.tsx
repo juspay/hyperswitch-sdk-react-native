@@ -130,7 +130,7 @@ export type configurationType = {
   readonly googlePay?: googlePayConfiguration
 };
 
-export type sendingToRNSDK = {
+export type sessionParams = {
   readonly configuration?: configurationType; 
   readonly customBackendUrl?: (undefined | string); 
   readonly publishableKey: string; 

@@ -178,7 +178,7 @@ type configurationType = {
   // IOS specific
 }
 @genType
-type sendingToRNSDK = {
+type sessionParams = {
   configuration?: configurationType,
   customBackendUrl?: option<string>,
   publishableKey: string,
@@ -189,7 +189,7 @@ type sendingToRNSDK = {
   locale?: string,
 }
 
-external parser: sendingToRNSDK => Js.Json.t = "%identity"
+external parser: sessionParams => Js.Json.t = "%identity"
 type paymentSheetTheme = [
   | #Automatic
   | #AlwaysLight

@@ -3,7 +3,8 @@ import { Platform } from 'react-native';
 
 import { View, Button, Text, ActivityIndicator } from 'react-native';
 import { useHyper } from 'hyperswitch-sdk-react-native';
-
+import type { sessionParams } from 'hyperswitch-sdk-react-native';
+type Option<T> = T | null;
 export default function HeadlessExampleComponent() {
   const {
     initPaymentSession,
@@ -22,7 +23,8 @@ export default function HeadlessExampleComponent() {
 
   const [showLoader, setShowLoader] = React.useState(false);
 
-  const [clientSecret, setClientSecret] = React.useState('');
+  const [savedPaymentSession, setSavedPaymentSession] =
+    React.useState<Option<sessionParams>>(null);
 
   const fetchPaymentParams = async () => {
     const response = await fetch(
@@ -42,14 +44,15 @@ export default function HeadlessExampleComponent() {
     return val;
   };
 
-  let createPayment = async () => {
+  let initialisePaymentSession = async () => {
     setShowLoader(true);
     const { clientSecret } = await fetchPaymentParams();
-    setClientSecret(clientSecret);
+
     const params = await initPaymentSession({
       clientSecret: clientSecret,
     });
-
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+    setSavedPaymentSession(savedPaymentSession);
     setIsHeadlessInitialised(true);
     setShowLoader(false);
   };
@@ -57,115 +60,92 @@ export default function HeadlessExampleComponent() {
   let getDefaultCustomerPaymentMethod = async () => {
     setShowLoader(true);
 
-    let params = await initPaymentSession({
-      clientSecret: clientSecret,
-    });
-    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+    if (savedPaymentSession != null) {
+      const pmObj =
+        await getCustomerDefaultSavedPaymentMethodData(savedPaymentSession);
 
-    const pmObj =
-      await getCustomerDefaultSavedPaymentMethodData(savedPaymentSession);
-    console.log('Headless example component--------', pmObj);
-    setResponse(JSON.stringify(pmObj));
+      setResponse(JSON.stringify(pmObj));
+    }
     setShowLoader(false);
   };
 
   let getCustomerLastUsedPaymentMethod = async () => {
     setShowLoader(true);
-    let params = await initPaymentSession({
-      clientSecret: clientSecret,
-    });
-    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
 
-    const pmObj =
-      await getCustomerLastUsedPaymentMethodData(savedPaymentSession);
+    if (savedPaymentSession != null) {
+      const pmObj =
+        await getCustomerLastUsedPaymentMethodData(savedPaymentSession);
 
-    console.log('Headless example component--------', pmObj);
-    setResponse(JSON.stringify(pmObj));
+      setResponse(JSON.stringify(pmObj));
+    }
     setShowLoader(false);
   };
 
   let getAllSavedPaymentMethodData = async () => {
     setShowLoader(true);
-    let params = await initPaymentSession({
-      clientSecret: clientSecret,
-    });
 
-    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
-    const savedPaymentMethodsArray =
-      await getCustomerSavedPaymentMethodData(savedPaymentSession);
+    if (savedPaymentSession != null) {
+      const savedPaymentMethodsArray =
+        await getCustomerSavedPaymentMethodData(savedPaymentSession);
 
-    console.log('Headless example component--------', savedPaymentMethodsArray);
-
-    savedPaymentMethodsArray.forEach((item, idx) => {
-      console.log(`${idx}---> ${item.cardHolderName}`);
-    });
-
-    setResponse(`{${JSON.stringify(savedPaymentMethodsArray[0])}....}`);
+      setResponse(`{${JSON.stringify(savedPaymentMethodsArray[0])}....}`);
+    }
     setShowLoader(false);
   };
 
   let confirmWithCustomerDefaultPM = async () => {
     setShowLoader(true);
-    let params = await initPaymentSession({
-      clientSecret: clientSecret,
-    });
 
-    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+    if (savedPaymentSession != null) {
+      const response = await confirmWithCustomerDefaultPaymentMethod(
+        savedPaymentSession,
+        '123'
+      );
 
-    const response = await confirmWithCustomerDefaultPaymentMethod(
-      savedPaymentSession,
-      '123'
-    );
-
-    console.log('Headless example component--------', response.message);
-    setResponse(JSON.stringify(response));
-    setShowLoader(false);
+      setResponse(JSON.stringify(response));
+      setShowLoader(false);
+    }
     setIsHeadlessInitialised(false);
   };
 
   let confirmWithLastUsedPM = async () => {
     setShowLoader(true);
-    let params = await initPaymentSession({
-      clientSecret: clientSecret,
-    });
 
-    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+    if (savedPaymentSession != null) {
+      const response = await confirmWithCustomerLastUsedPaymentMethod(
+        savedPaymentSession,
+        '424'
+      );
 
-    const response = await confirmWithCustomerLastUsedPaymentMethod(
-      savedPaymentSession,
-      '424'
-    );
-
-    console.log('Headless example component--------', response.message);
-    setResponse(JSON.stringify(response));
-    setShowLoader(false);
+      setResponse(JSON.stringify(response));
+      setShowLoader(false);
+    }
     setIsHeadlessInitialised(false);
   };
 
   let confirmWithPaymentToken = async () => {
     setShowLoader(true);
-    let params = await initPaymentSession({
-      clientSecret: clientSecret,
-    });
 
-    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+    if (savedPaymentSession != null) {
+      const response = await confirmWithCustomerPaymentToken(
+        savedPaymentSession,
+        '424',
+        'CUSTOMER_PAYMENT_TOKEN'
+      );
 
-    const response = await confirmWithCustomerPaymentToken(
-      savedPaymentSession,
-      '424',
-      'CUSTOMER_PAYMENT_TOKEN'
-    );
-
-    console.log('Headless example component--------', response.message);
-    setResponse(JSON.stringify(response));
-    setShowLoader(false);
+      setResponse(JSON.stringify(response));
+      setShowLoader(false);
+    }
     setIsHeadlessInitialised(false);
   };
 
   return (
     <View style={{ margin: 10 }}>
       <View style={{ marginTop: 50 }}>
-        <Button title="Init Headless" onPress={createPayment} />
+        <Button
+          title="Init Payment Session"
+          onPress={initialisePaymentSession}
+        />
         <View style={{ marginTop: 10 }} />
         <Button
           title="get Customer Default Saved Payment Method Data"
@@ -179,7 +159,6 @@ export default function HeadlessExampleComponent() {
           disabled={!isHeadlessInitialised}
         />
         <View style={{ marginTop: 10 }} />
-        {/* <Button title="Confirm Payment" onPress={confirmWithDefault} /> */}
         <Button
           title="get All Saved Payment Method Data"
           onPress={getAllSavedPaymentMethodData}
