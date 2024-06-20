@@ -35,6 +35,8 @@ var hyperswitch_initPaymentSession = getJsonFunWithCallbackFromKey("initPaymentS
 
 var hyperswitch_presentPaymentSheet = getJsonFunWithCallbackFromKey("presentPaymentSheet");
 
+var hyperswitch_getCustomerSavedPaymentMethods = getJsonFunWithCallbackFromKey("getCustomerSavedPaymentMethods");
+
 var hyperswitch_getCustomerDefaultSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerDefaultSavedPaymentMethodData");
 
 var hyperswitch_getCustomerLastUsedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerLastUsedPaymentMethodData");
@@ -50,6 +52,7 @@ var hyperswitch_confirmWithCustomerPaymentToken = getJsonFunWithCallbackFromKey(
 var hyperswitch = {
   initPaymentSession: hyperswitch_initPaymentSession,
   presentPaymentSheet: hyperswitch_presentPaymentSheet,
+  getCustomerSavedPaymentMethods: hyperswitch_getCustomerSavedPaymentMethods,
   getCustomerDefaultSavedPaymentMethodData: hyperswitch_getCustomerDefaultSavedPaymentMethodData,
   getCustomerLastUsedPaymentMethodData: hyperswitch_getCustomerLastUsedPaymentMethodData,
   getCustomerSavedPaymentMethodData: hyperswitch_getCustomerSavedPaymentMethodData,
@@ -61,6 +64,11 @@ var hyperswitch = {
 function initPaymentSession(requestObj, callback) {
   console.log("init payment Session Native module rn wrapper ");
   hyperswitch_initPaymentSession(requestObj, callback);
+}
+
+function getCustomerSavedPaymentMethods(requestObj, callback) {
+  console.log("init payment Session Native module rn wrapper ");
+  hyperswitch_getCustomerSavedPaymentMethods(requestObj, callback);
 }
 
 function presentPaymentSheet(requestObj, callback) {
@@ -94,6 +102,7 @@ export {
   getStrFunWithCallbackFromKey ,
   hyperswitch ,
   initPaymentSession ,
+  getCustomerSavedPaymentMethods ,
   presentPaymentSheet ,
   getCustomerDefaultSavedPaymentMethodData ,
   getCustomerLastUsedPaymentMethodData ,

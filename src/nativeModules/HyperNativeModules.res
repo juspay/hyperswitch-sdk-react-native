@@ -13,6 +13,7 @@ Console.log2("hyperswitch dict------>", hyperswitchDict)
 type hyperswitch = {
   initPaymentSession: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   presentPaymentSheet: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
+  getCustomerSavedPaymentMethods: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerDefaultSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerLastUsedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
@@ -49,6 +50,7 @@ let getStrFunWithCallbackFromKey = key => {
 let hyperswitch = {
   initPaymentSession: getJsonFunWithCallbackFromKey("initPaymentSession"),
   presentPaymentSheet: getJsonFunWithCallbackFromKey("presentPaymentSheet"),
+  getCustomerSavedPaymentMethods: getJsonFunWithCallbackFromKey("getCustomerSavedPaymentMethods"),
   getCustomerDefaultSavedPaymentMethodData: getJsonFunWithCallbackFromKey(
     "getCustomerDefaultSavedPaymentMethodData",
   ),
@@ -70,6 +72,11 @@ let hyperswitch = {
 let initPaymentSession = (requestObj: Js.Json.t, callback) => {
   Console.log("init payment Session Native module rn wrapper ")
   hyperswitch.initPaymentSession(requestObj, callback)
+}
+
+let getCustomerSavedPaymentMethods = (requestObj: Js.Json.t, callback) => {
+  Console.log("init payment Session Native module rn wrapper ")
+  hyperswitch.getCustomerSavedPaymentMethods(requestObj, callback)
 }
 let presentPaymentSheet = (requestObj: Js.Json.t, callback) => {
   Console.log2("reaching here------", requestObj)

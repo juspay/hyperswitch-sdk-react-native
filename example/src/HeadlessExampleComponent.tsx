@@ -7,6 +7,7 @@ import { useHyper } from 'hyperswitch-sdk-react-native';
 export default function HeadlessExampleComponent() {
   const {
     initPaymentSession,
+    getCustomerSavedPaymentMethods,
     getCustomerDefaultSavedPaymentMethodData,
     getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,
@@ -48,6 +49,7 @@ export default function HeadlessExampleComponent() {
     const params = await initPaymentSession({
       clientSecret: clientSecret,
     });
+
     setIsHeadlessInitialised(true);
     setShowLoader(false);
   };
@@ -58,8 +60,10 @@ export default function HeadlessExampleComponent() {
     let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
 
-    const pmObj = await getCustomerDefaultSavedPaymentMethodData(params);
+    const pmObj =
+      await getCustomerDefaultSavedPaymentMethodData(savedPaymentSession);
     console.log('Headless example component--------', pmObj);
     setResponse(JSON.stringify(pmObj));
     setShowLoader(false);
@@ -70,8 +74,11 @@ export default function HeadlessExampleComponent() {
     let params = await initPaymentSession({
       clientSecret: clientSecret,
     });
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
 
-    const pmObj = await getCustomerLastUsedPaymentMethodData(params);
+    const pmObj =
+      await getCustomerLastUsedPaymentMethodData(savedPaymentSession);
+
     console.log('Headless example component--------', pmObj);
     setResponse(JSON.stringify(pmObj));
     setShowLoader(false);
@@ -83,8 +90,9 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
     const savedPaymentMethodsArray =
-      await getCustomerSavedPaymentMethodData(params);
+      await getCustomerSavedPaymentMethodData(savedPaymentSession);
 
     console.log('Headless example component--------', savedPaymentMethodsArray);
 
@@ -102,8 +110,10 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+
     const response = await confirmWithCustomerDefaultPaymentMethod(
-      params,
+      savedPaymentSession,
       '123'
     );
 
@@ -119,8 +129,10 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
+    const savedPaymentSession = await getCustomerSavedPaymentMethods(params);
+
     const response = await confirmWithCustomerLastUsedPaymentMethod(
-      params,
+      savedPaymentSession,
       '424'
     );
 

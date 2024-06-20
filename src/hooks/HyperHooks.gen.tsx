@@ -18,6 +18,7 @@ import type {sendingToRNSDK as HyperTypes_sendingToRNSDK} from '../../src/types/
 export type useHyperReturnType = {
   readonly initPaymentSession: (_1:HyperTypes_initPaymentSheetParamTypes) => Promise<HyperTypes_sendingToRNSDK>; 
   readonly presentPaymentSheet: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_responseFromNativeModule>; 
+  readonly getCustomerSavedPaymentMethods: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_sendingToRNSDK>; 
   readonly getCustomerDefaultSavedPaymentMethodData: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_savedPaymentMethodType>; 
   readonly getCustomerLastUsedPaymentMethodData: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_savedPaymentMethodType>; 
   readonly getCustomerSavedPaymentMethodData: (_1:HyperTypes_sendingToRNSDK) => Promise<HyperTypes_savedPaymentMethodType[]>; 

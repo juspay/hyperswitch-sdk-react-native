@@ -4,6 +4,7 @@ external parser: HyperTypes.sendingToRNSDK => Js.Json.t = "%identity"
 type useHyperReturnType = {
   initPaymentSession: HyperTypes.initPaymentSheetParamTypes => promise<HyperTypes.sendingToRNSDK>,
   presentPaymentSheet: HyperTypes.sendingToRNSDK => promise<HyperTypes.responseFromNativeModule>,
+  getCustomerSavedPaymentMethods: HyperTypes.sendingToRNSDK => promise<HyperTypes.sendingToRNSDK>,
   getCustomerDefaultSavedPaymentMethodData: HyperTypes.sendingToRNSDK => promise<
     HyperTypes.savedPaymentMethodType,
   >,
@@ -58,6 +59,16 @@ let useHyper = (): useHyperReturnType => {
     })
   }
 
+  let getCustomerSavedPaymentMethods = (paySheetParams: HyperTypes.sendingToRNSDK) => {
+    let paySheetParamsJson = paySheetParams->parser
+
+    Js.Promise.make((~resolve: HyperTypes.sendingToRNSDK => unit, ~reject as _) => {
+      let responseResolve = _ => {
+        resolve(paySheetParams)
+      }
+      HyperNativeModules.getCustomerSavedPaymentMethods(paySheetParamsJson, responseResolve)
+    })
+  }
   let getCustomerDefaultSavedPaymentMethodData = (paySheetParams: HyperTypes.sendingToRNSDK) => {
     let paySheetParamsJson = paySheetParams->parser
 
@@ -153,6 +164,7 @@ let useHyper = (): useHyperReturnType => {
   {
     initPaymentSession,
     presentPaymentSheet,
+    getCustomerSavedPaymentMethods,
     getCustomerDefaultSavedPaymentMethodData,
     getCustomerLastUsedPaymentMethodData,
     getCustomerSavedPaymentMethodData,

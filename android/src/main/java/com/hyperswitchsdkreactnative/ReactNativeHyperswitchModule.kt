@@ -46,13 +46,28 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
     val paymentSession = PaymentSession(currentActivity as Activity, publishableKey)
     paymentSession.initPaymentSession(clientSecret ?: "")
     Companion.paymentSession = paymentSession
+
+      val map = Arguments.createMap()
+      map.putString("type_", "")
+      map.putString("code", "")
+      map.putString("message", "initPaymentSession successful")
+      map.putString("status", "success")
+
+      callBackResultHandler(callBack, map)
+
+
+  }
+
+  @ReactMethod
+  fun getCustomerSavedPaymentMethods(request: ReadableMap,callBack: Callback)
+  {
     paymentSession.getCustomerSavedPaymentMethods {
       Companion.paymentSessionHandler = it
 
       val map = Arguments.createMap()
       map.putString("type_", "")
       map.putString("code", "")
-      map.putString("message", "initPaymentSession successful")
+      map.putString("message", "getCustomerSavedPaymentMethods successful")
       map.putString("status", "success")
 
       callBackResultHandler(callBack, map)
