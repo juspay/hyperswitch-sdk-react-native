@@ -13,12 +13,14 @@ type useHyperReturnType = {
   getCustomerSavedPaymentMethodData: HyperTypes.sendingToRNSDK => promise<
     array<HyperTypes.savedPaymentMethodType>,
   >,
-  confirmWithCustomerDefaultPaymentMethod: HyperTypes.sendingToRNSDK => promise<
-    HyperTypes.headlessConfirmResponseType,
-  >,
-  confirmWithCustomerLastUsedPaymentMethod: HyperTypes.sendingToRNSDK => promise<
-    HyperTypes.headlessConfirmResponseType,
-  >,
+  confirmWithCustomerDefaultPaymentMethod: (
+    HyperTypes.sendingToRNSDK,
+    option<string>,
+  ) => promise<HyperTypes.headlessConfirmResponseType>,
+  confirmWithCustomerLastUsedPaymentMethod: (
+    HyperTypes.sendingToRNSDK,
+    option<string>,
+  ) => promise<HyperTypes.headlessConfirmResponseType>,
 }
 
 @genType
@@ -108,7 +110,10 @@ let useHyper = (): useHyperReturnType => {
     })
   }
 
-  let confirmWithCustomerDefaultPaymentMethod = (paySheetParams: HyperTypes.sendingToRNSDK) => {
+  let confirmWithCustomerDefaultPaymentMethod = (
+    paySheetParams: HyperTypes.sendingToRNSDK,
+    cvc: option<string>,
+  ) => {
     let paySheetParamsJson = paySheetParams->parser
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
@@ -119,12 +124,16 @@ let useHyper = (): useHyperReturnType => {
       }
       HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(
         paySheetParamsJson,
+        cvc,
         responseResolve,
       )
     })
   }
 
-  let confirmWithCustomerLastUsedPaymentMethod = (paySheetParams: HyperTypes.sendingToRNSDK) => {
+  let confirmWithCustomerLastUsedPaymentMethod = (
+    paySheetParams: HyperTypes.sendingToRNSDK,
+    cvc: option<string>,
+  ) => {
     let paySheetParamsJson = paySheetParams->parser
 
     Js.Promise.make((~resolve: HyperTypes.headlessConfirmResponseType => unit, ~reject as _) => {
@@ -135,6 +144,7 @@ let useHyper = (): useHyperReturnType => {
       }
       HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(
         paySheetParamsJson,
+        cvc,
         responseResolve,
       )
     })

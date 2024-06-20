@@ -1,5 +1,5 @@
 type jsonFunWithCallback = (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit
-type strFunWithCallback = (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit
+type strFunWithCallback = (Js.Json.t, option<string>, Js.Dict.t<Js.Json.t> => unit) => unit
 external jsonToJsonFunWithCallback: Js.Json.t => jsonFunWithCallback = "%identity"
 external jsonToStrFunWithCallback: Js.Json.t => strFunWithCallback = "%identity"
 
@@ -16,8 +16,16 @@ type hyperswitch = {
   getCustomerDefaultSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerLastUsedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
   getCustomerSavedPaymentMethodData: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
-  confirmWithCustomerDefaultPaymentMethod: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
-  confirmWithCustomerLastUsedPaymentMethod: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
+  confirmWithCustomerDefaultPaymentMethod: (
+    Js.Json.t,
+    option<string>,
+    Js.Dict.t<Js.Json.t> => unit,
+  ) => unit,
+  confirmWithCustomerLastUsedPaymentMethod: (
+    Js.Json.t,
+    option<string>,
+    Js.Dict.t<Js.Json.t> => unit,
+  ) => unit,
   confirmWithCustomerPaymentToken: (Js.Json.t, Js.Dict.t<Js.Json.t> => unit) => unit,
 }
 
@@ -34,7 +42,7 @@ let getJsonFunWithCallbackFromKey = key => {
 let getStrFunWithCallbackFromKey = key => {
   switch hyperswitchDict->Dict.get(key) {
   | Some(json) => jsonToStrFunWithCallback(json)
-  | None => (_, _) => ()
+  | None => (_, _, _) => ()
   }
 }
 
@@ -50,10 +58,10 @@ let hyperswitch = {
   getCustomerSavedPaymentMethodData: getJsonFunWithCallbackFromKey(
     "getCustomerSavedPaymentMethodData",
   ),
-  confirmWithCustomerDefaultPaymentMethod: getJsonFunWithCallbackFromKey(
+  confirmWithCustomerDefaultPaymentMethod: getStrFunWithCallbackFromKey(
     "confirmWithCustomerDefaultPaymentMethod",
   ),
-  confirmWithCustomerLastUsedPaymentMethod: getJsonFunWithCallbackFromKey(
+  confirmWithCustomerLastUsedPaymentMethod: getStrFunWithCallbackFromKey(
     "confirmWithCustomerLastUsedPaymentMethod",
   ),
   confirmWithCustomerPaymentToken: getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken"),
@@ -81,10 +89,18 @@ let getCustomerSavedPaymentMethodData = (requestObj: Js.Json.t, callback) => {
   hyperswitch.getCustomerSavedPaymentMethodData(requestObj, callback)
 }
 
-let confirmWithCustomerDefaultPaymentMethod = (requestObj: Js.Json.t, callback) => {
-  hyperswitch.confirmWithCustomerDefaultPaymentMethod(requestObj, callback)
+let confirmWithCustomerDefaultPaymentMethod = (
+  requestObj: Js.Json.t,
+  cvc: option<string>,
+  callback,
+) => {
+  hyperswitch.confirmWithCustomerDefaultPaymentMethod(requestObj, cvc, callback)
 }
 
-let confirmWithCustomerLastUsedPaymentMethod = (requestObj: Js.Json.t, callback) => {
-  hyperswitch.confirmWithCustomerLastUsedPaymentMethod(requestObj, callback)
+let confirmWithCustomerLastUsedPaymentMethod = (
+  requestObj: Js.Json.t,
+  cvc: option<string>,
+  callback,
+) => {
+  hyperswitch.confirmWithCustomerLastUsedPaymentMethod(requestObj, cvc, callback)
 }

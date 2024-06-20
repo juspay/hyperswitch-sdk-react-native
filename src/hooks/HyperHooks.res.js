@@ -70,20 +70,20 @@ function useHyper() {
                   HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParams, responseResolve);
                 }));
   };
-  var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams) {
+  var confirmWithCustomerDefaultPaymentMethod = function (paySheetParams, cvc) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
                     resolve(arg);
                   };
-                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParams, responseResolve);
+                  HyperNativeModules.confirmWithCustomerDefaultPaymentMethod(paySheetParams, cvc, responseResolve);
                 }));
   };
-  var confirmWithCustomerLastUsedPaymentMethod = function (paySheetParams) {
+  var confirmWithCustomerLastUsedPaymentMethod = function (paySheetParams, cvc) {
     return new Promise((function (resolve, param) {
                   var responseResolve = function (arg) {
                     resolve(arg);
                   };
-                  HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParams, responseResolve);
+                  HyperNativeModules.confirmWithCustomerLastUsedPaymentMethod(paySheetParams, cvc, responseResolve);
                 }));
   };
   return {

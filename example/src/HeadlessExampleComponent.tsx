@@ -102,11 +102,15 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
-    const response = await confirmWithCustomerDefaultPaymentMethod(params);
+    const response = await confirmWithCustomerDefaultPaymentMethod(
+      params,
+      '123'
+    );
 
     console.log('Headless example component--------', response.message);
     setResponse(JSON.stringify(response));
     setShowLoader(false);
+    setIsHeadlessInitialised(false);
   };
 
   let confirmWithLastUsedPM = async () => {
@@ -115,11 +119,15 @@ export default function HeadlessExampleComponent() {
       clientSecret: clientSecret,
     });
 
-    const response = await confirmWithCustomerLastUsedPaymentMethod(params);
+    const response = await confirmWithCustomerLastUsedPaymentMethod(
+      params,
+      '424'
+    );
 
     console.log('Headless example component--------', response.message);
     setResponse(JSON.stringify(response));
     setShowLoader(false);
+    setIsHeadlessInitialised(false);
   };
 
   return (

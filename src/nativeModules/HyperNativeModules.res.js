@@ -25,7 +25,7 @@ function getStrFunWithCallbackFromKey(key) {
   if (json !== undefined) {
     return json;
   } else {
-    return function (param, param$1) {
+    return function (param, param$1, param$2) {
       
     };
   }
@@ -41,9 +41,9 @@ var hyperswitch_getCustomerLastUsedPaymentMethodData = getJsonFunWithCallbackFro
 
 var hyperswitch_getCustomerSavedPaymentMethodData = getJsonFunWithCallbackFromKey("getCustomerSavedPaymentMethodData");
 
-var hyperswitch_confirmWithCustomerDefaultPaymentMethod = getJsonFunWithCallbackFromKey("confirmWithCustomerDefaultPaymentMethod");
+var hyperswitch_confirmWithCustomerDefaultPaymentMethod = getStrFunWithCallbackFromKey("confirmWithCustomerDefaultPaymentMethod");
 
-var hyperswitch_confirmWithCustomerLastUsedPaymentMethod = getJsonFunWithCallbackFromKey("confirmWithCustomerLastUsedPaymentMethod");
+var hyperswitch_confirmWithCustomerLastUsedPaymentMethod = getStrFunWithCallbackFromKey("confirmWithCustomerLastUsedPaymentMethod");
 
 var hyperswitch_confirmWithCustomerPaymentToken = getJsonFunWithCallbackFromKey("confirmWithCustomerPaymentToken");
 
@@ -80,12 +80,12 @@ function getCustomerSavedPaymentMethodData(requestObj, callback) {
   hyperswitch_getCustomerSavedPaymentMethodData(requestObj, callback);
 }
 
-function confirmWithCustomerDefaultPaymentMethod(requestObj, callback) {
-  hyperswitch_confirmWithCustomerDefaultPaymentMethod(requestObj, callback);
+function confirmWithCustomerDefaultPaymentMethod(requestObj, cvc, callback) {
+  hyperswitch_confirmWithCustomerDefaultPaymentMethod(requestObj, cvc, callback);
 }
 
-function confirmWithCustomerLastUsedPaymentMethod(requestObj, callback) {
-  hyperswitch_confirmWithCustomerLastUsedPaymentMethod(requestObj, callback);
+function confirmWithCustomerLastUsedPaymentMethod(requestObj, cvc, callback) {
+  hyperswitch_confirmWithCustomerLastUsedPaymentMethod(requestObj, cvc, callback);
 }
 
 export {
