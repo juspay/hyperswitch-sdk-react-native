@@ -47,7 +47,7 @@ class HyperHeadlessModule internal constructor(rct: ReactApplicationContext) : R
 
   // Method to exit the headless mode
   @ReactMethod
-  fun exitHeadless(status: ReadableMap) {
+  fun exitHeadless(status: String) {
     // Call the exitHeadless method from PaymentSession singleton
     PaymentSession.exitHeadless(status)
   }

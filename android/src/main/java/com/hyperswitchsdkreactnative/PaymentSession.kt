@@ -26,6 +26,7 @@ import io.hyperswitch.payments.paymentlauncher.PaymentResult
 //import io.hyperswitch.paymentsheet.PaymentSheet
 import io.hyperswitch.paymentsheet.PaymentSheetResult
 //import io.hyperswitch.react.Utils
+import org.json.JSONObject
 
 class PaymentSession {
 //  private var paymentSheet: PaymentSheet? = null
@@ -329,7 +330,8 @@ class PaymentSession {
 
 
     @SuppressLint("VisibleForTests")
-    fun exitHeadless(message: ReadableMap) {
+    fun exitHeadless(paymentResult: String) {
+      val message = JSONObject(paymentResult)
       when (val status = message.getString("status")) {
         "cancelled" -> headlessCompletion?.let { it(PaymentResult.Canceled(status)) }
         "failed", "requires_payment_method" -> {
@@ -340,8 +342,8 @@ class PaymentSession {
 
         else -> headlessCompletion?.let { it(PaymentResult.Completed(status ?: "default")) }
       }
-//       reactInstanceManager?.currentReactContext?.destroy()
-//       reactInstanceManager?.destroy()
+      // reactInstanceManager?.currentReactContext?.destroy()
+      // reactInstanceManager?.destroy()
     }
   }
 }

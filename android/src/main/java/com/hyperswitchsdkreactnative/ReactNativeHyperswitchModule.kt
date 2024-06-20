@@ -54,8 +54,6 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
       map.putString("status", "success")
 
       callBackResultHandler(callBack, map)
-
-
   }
 
   @ReactMethod
