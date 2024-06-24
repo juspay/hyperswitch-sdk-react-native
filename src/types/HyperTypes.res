@@ -31,26 +31,6 @@ type headlessConfirmResponseType = {
 @scope("JSON")
 external parseResponseFromNativeModule: Js.Dict.t<Js.Json.t> => responseFromNativeModule = "parse"
 
-external parseConfirmResponse: Js.Dict.t<Js.Json.t> => headlessConfirmResponseType = "%identity"
-
-external parseJson: Js.Dict.t<Js.Json.t> => JSON.t = "%identity"
-
-external toJsonArray: 'a => array<Js.Json.t> = "%identity"
-
-// external cardDictToObj: Js.Dict.t<Js.Json.t> => savedCard = "%identity"
-external savedPMToObj: option<Js.Json.t> => savedPaymentMethodType = "%identity"
-
-external savedPMToArrObj: array<option<Js.Json.t>> => array<savedPaymentMethodType> = "%identity"
-
-// let paymentMethodItemToObjMapper = pmItem => {
-//   let val = pmItem->parseJson
-//   let pmDict = val->JSON.Decode.object->Option.getOr(Dict.make())
-//   let pMType =
-//     pmDict->Dict.get("paymentMethodType")->Option.getExn->JSON.Decode.string->Option.getOr("")
-
-//   let pmObj = {...pmDict->savedPMToObj, paymentMethodType: pMType}
-//   pmObj
-// }
 @genType
 type customerConfiguration = {
   id: option<string>,
@@ -234,4 +214,75 @@ type initPaymentSheetParamTypes = {
   primaryButtonLabel?: string,
   branding?: string,
   locale?: string,
+}
+
+let parseConfirmResponse = (responseDict: Js.Dict.t<Js.Json.t>) => {
+  let message =
+    responseDict
+    ->Js.Dict.get("message")
+    ->Option.getOr(Js.Json.null)
+    ->Js.Json.decodeString
+    ->Option.getOr("")
+
+  let type_ =
+    responseDict
+    ->Js.Dict.get("type")
+    ->Option.getOr(Js.Json.null)
+    ->Js.Json.decodeString
+    ->Option.getOr("")
+
+  {
+    message,
+    type_,
+  }
+}
+
+let getString = (dict, key, defaultVal) => {
+  dict
+  ->Dict.get(key)
+  ->Option.getOr(Js.Json.null)
+  ->Js.Json.decodeString
+  ->Option.getOr(defaultVal)
+}
+
+let getBool = (dict, key, defaultVal) => {
+  dict
+  ->Dict.get(key)
+  ->Option.getOr(Js.Json.null)
+  ->Js.Json.decodeBoolean
+  ->Option.getOr(defaultVal)
+}
+let parseSavedPaymentMethod = (paymentMethodDict: Js.Dict.t<Js.Json.t>) => {
+  let paymentMethodType = paymentMethodDict->getString("type", "")
+  let paymentMethodDict =
+    paymentMethodDict
+    ->Dict.get("message")
+    ->Option.getOr(Js.Json.null)
+    ->Js.Json.decodeObject
+    ->Option.getOr(Dict.make())
+
+  {
+    paymentMethodType,
+    isDefaultPaymentMethod: paymentMethodDict->getBool("isDefaultPaymentMethod", false),
+    paymentToken: paymentMethodDict->getString("paymentToken", ""),
+    cardScheme: paymentMethodDict->getString("cardScheme", ""),
+    name: paymentMethodDict->getString("name", ""),
+    expiryDate: paymentMethodDict->getString("expiryDate", ""),
+    cardNumber: paymentMethodDict->getString("cardNumber", ""),
+    nickName: paymentMethodDict->getString("nickName", ""),
+    cardHolderName: paymentMethodDict->getString("cardHolderName", ""),
+    requiresCVV: paymentMethodDict->getBool("requiresCVV", false),
+    created: paymentMethodDict->getString("created", ""),
+    lastUsedAt: paymentMethodDict->getString("lastUsedAt", ""),
+    walletType: paymentMethodDict->getString("walletType", ""),
+  }
+}
+
+let parseAllSavedPaymentMethods = (paymentMethodsDict: Js.Dict.t<Js.Json.t>) => {
+  let savedPMJson = paymentMethodsDict->Js.Dict.get("paymentMethods")->Option.getOr(Js.Json.null)
+  let savedPMJsonArr = savedPMJson->Js.Json.decodeArray->Option.getOr([])
+
+  savedPMJsonArr->Array.map(item =>
+    item->Js.Json.decodeObject->Option.getOr(Dict.make())->parseSavedPaymentMethod
+  )
 }

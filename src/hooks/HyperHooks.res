@@ -51,7 +51,7 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.sessionParams => unit, ~reject as _) => {
       let responseResolve = arg => {
-        Console.log2("From RN Native module", arg)
+        // Console.log2("From RN Native module", arg)
         resolve(hsSdkParams)
       }
       HyperNativeModules.initPaymentSession(hsSdkParams->HyperTypes.parser, responseResolve)
@@ -85,7 +85,7 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.savedPaymentMethodType => unit, ~reject as _) => {
       let responseResolve = arg => {
-        let val = arg->Js.Dict.get("message")->HyperTypes.savedPMToObj
+        let val = arg->HyperTypes.parseSavedPaymentMethod
 
         resolve(val)
       }
@@ -101,7 +101,8 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.savedPaymentMethodType => unit, ~reject as _) => {
       let responseResolve = arg => {
-        let val = arg->Js.Dict.get("message")->HyperTypes.savedPMToObj
+        arg->HyperTypes.parseSavedPaymentMethod->ignore
+        let val = arg->HyperTypes.parseSavedPaymentMethod
 
         resolve(val)
       }
@@ -114,18 +115,7 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: array<HyperTypes.savedPaymentMethodType> => unit, ~reject as _) => {
       let responseResolve = arg => {
-        let savedPMJsonArr =
-          arg
-          ->Js.Dict.get("paymentMethods")
-          ->HyperTypes.toJsonArray
-          ->Array.map(item => {
-            item
-            ->Js.Json.decodeObject
-            ->Option.getOr(Js.Dict.empty())
-            ->Js.Dict.get("message")
-          })
-
-        let val = savedPMJsonArr->HyperTypes.savedPMToArrObj
+        let val = arg->HyperTypes.parseAllSavedPaymentMethods
         resolve(val)
       }
       HyperNativeModules.getCustomerSavedPaymentMethodData(paySheetParamsJson, responseResolve)
