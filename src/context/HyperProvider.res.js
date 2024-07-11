@@ -27,10 +27,7 @@ function HyperProvider(props) {
   var publishableKey = __publishableKey !== undefined ? __publishableKey : "";
   var customBackendUrl = __customBackendUrl !== undefined ? Caml_option.valFromOption(__customBackendUrl) : undefined;
   var match = React.useState(function () {
-        return {
-                publishableKey: publishableKey,
-                customBackendUrl: customBackendUrl
-              };
+        return dafaultVal;
       });
   var setState = match[1];
   React.useEffect((function () {

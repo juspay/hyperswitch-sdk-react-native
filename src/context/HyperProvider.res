@@ -13,7 +13,7 @@ module Provider = {
 }
 @react.component
 let make = (~children, ~publishableKey="", ~customBackendUrl=None) => {
-  let (state, setState) = React.useState(_ => {publishableKey, ?customBackendUrl})
+  let (state, setState) = React.useState(_ => dafaultVal)
 
   React.useEffect1(() => {
     setState(_ => {publishableKey, ?customBackendUrl})
