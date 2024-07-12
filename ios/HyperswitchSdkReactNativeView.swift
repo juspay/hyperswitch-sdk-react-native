@@ -6,6 +6,7 @@ class HyperModule: RCTEventEmitter {
     let applePayPaymentHandler = ApplePayHandler()
     var paymentSheetViewController:UIViewController?
     public static var shared:HyperModule?
+    private var paymentSession: PaymentSession?
     
     override init() {
         super.init()
@@ -31,11 +32,23 @@ class HyperModule: RCTEventEmitter {
     }
 
     @objc
-    func presentPaymentSheet(_ request: NSMutableDictionary, _ callBack: @escaping RCTResponseSenderBlock) -> Void {
-        RNViewManager.sheetCallback = callBack
-        request["type"] = "payment"
+    func initPaymentSession(_ request: NSMutableDictionary, _ callBack: @escaping RCTResponseSenderBlock) {
+        self.paymentSession = PaymentSession()
+        paymentSession?.initPaymentSession(paymentIntentClientSecret: request["clientSecret"] as! String)
+        
+        var statusMap: [String: Any] = [:]
+        statusMap["type_"] = ""
+        statusMap["code"] = ""
+        statusMap["message"] = "initPaymentSession successful"
+        statusMap["status"] = "success"
+        callBack([statusMap])
+    }
+
+    @objc
+    func presentPaymentSheet(_ request: NSMutableDictionary, _ callBack: @escaping RCTResponseSenderBlock) {
         request["appId"] = Bundle.main.bundleIdentifier ?? ""
         
+        RNViewManager.sheetCallback = callBack
         DispatchQueue.main.async {
             let rootView = RNViewManager.sharedInstance.viewForModule("hyperSwitch", initialProperties: ["props": request])
             rootView.backgroundColor = UIColor.clear
@@ -43,7 +56,7 @@ class HyperModule: RCTEventEmitter {
             self.paymentSheetViewController?.view = rootView
             self.paymentSheetViewController?.modalPresentationStyle = .overCurrentContext
 
-            UIApplication.shared.delegate?.window??.rootViewController?.present(self.paymentSheetViewController!, animated: true, completion: nil)
+            UIApplication.shared.delegate?.window??.rootViewController?.present(self.paymentSheetViewController!, animated: false, completion: nil)
         }
     }
 
@@ -52,7 +65,7 @@ class HyperModule: RCTEventEmitter {
         DispatchQueue.main.async {
             if let view = RNViewManager.sharedInstance.rootView {
                 let reactNativeVC: UIViewController? = view.reactViewController()
-                reactNativeVC?.dismiss(animated: true, completion: nil)
+                reactNativeVC?.dismiss(animated: false, completion: nil)
                 RNViewManager.sharedInstance.rootView = nil
             }
         }
