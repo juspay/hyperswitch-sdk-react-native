@@ -56,13 +56,14 @@ protocol RNResponseHandler {
 class RNViewManager: NSObject {
     
     var rootView: RCTRootView?
-    static var sheetCallback:RCTResponseSenderBlock?
+    static var sheetCallback: RCTResponseSenderBlock?
 
     lazy var bridge: RCTBridge = {
         RCTBridge.init(delegate: self, launchOptions: nil)
     }()
     
     static let sharedInstance = RNViewManager()
+    static let sharedInstance2 = RNViewManager()
     
     func viewForModule(_ moduleName: String, initialProperties: [String : Any]?) -> RCTRootView {
         let rootView: RCTRootView = RCTRootView(
@@ -71,6 +72,11 @@ class RNViewManager: NSObject {
             initialProperties: initialProperties)
         self.rootView = rootView
         return rootView
+    }
+    
+    func reinvalidateBridge(){
+        self.bridge.invalidate()
+        self.bridge = RCTBridge.init(delegate: self, launchOptions: nil)
     }
 }
 

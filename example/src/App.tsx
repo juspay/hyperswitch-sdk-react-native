@@ -11,7 +11,7 @@ import type { RootStackParamList } from './Home';
 enableScreens();
 export default function App() {
   const Stack = createStackNavigator<RootStackParamList>();
-  const publishableKey = 'pk_snd_3b33cd9404234113804aa1accaabe22f';
+  const publishableKey = 'pk_snd_2a48f5ff08094e2d8064c59063adfeeb';
   return (
     <HyperProvider
       publishableKey={publishableKey}

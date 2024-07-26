@@ -51,6 +51,8 @@ let useHyper = (): useHyperReturnType => {
 
     Js.Promise.make((~resolve: HyperTypes.sessionParams => unit, ~reject as _) => {
       let responseResolve = arg => {
+        /* NOTE: discuss with @Sanskar Atrey about the usage of `arg` from native 
+          (can be used to handle the failure cases). */ 
         // Console.log2("From RN Native module", arg)
         resolve(hsSdkParams)
       }

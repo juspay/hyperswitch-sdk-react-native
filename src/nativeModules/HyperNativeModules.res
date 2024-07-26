@@ -88,7 +88,7 @@ let initPaymentSession = (requestObj: Js.Json.t, callback) => {
 }
 
 let getCustomerSavedPaymentMethods = (requestObj: Js.Json.t, callback) => {
-  Console.log("init payment Session Native module rn wrapper ")
+  Console.log("getCustomerSavedPaymentMethods Native module rn wrapper ")
   hyperswitch.getCustomerSavedPaymentMethods(requestObj, callback)
 }
 let presentPaymentSheet = (requestObj: Js.Json.t, callback) => {

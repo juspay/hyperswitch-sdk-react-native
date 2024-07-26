@@ -109,12 +109,12 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
         }
 
         is PaymentMethod.Error -> {
-          map.putString("type", "wallet")
+          map.putString("type", "error")
           map.putMap("message", Arguments.makeNativeMap(paymentMethod.toHashMap()))
         }
 
         else -> {
-          map.putString("type", "wallet")
+          map.putString("type", "error")
           map.putString("message", "unknown error")
         }
 
@@ -130,9 +130,6 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun getCustomerLastUsedPaymentMethodData(request: ReadableMap, callBack: Callback) {
 
-    Log.i("Register Headless", "called on Native Side")
-    val publishableKey = request.getString("publishableKey")
-    val clientSecret = request.getString("clientSecret")
     val map = Arguments.createMap()
 
     currentActivity?.runOnUiThread {
@@ -175,9 +172,6 @@ class ReactNativeHyperswitchModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun getCustomerSavedPaymentMethodData(request: ReadableMap, callBack: Callback) {
 
-    Log.i("Register Headless", "called on Native Side")
-    val publishableKey = request.getString("publishableKey")
-    val clientSecret = request.getString("clientSecret")
     val map = Arguments.createMap()
 
     currentActivity?.runOnUiThread {

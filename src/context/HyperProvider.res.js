@@ -4,12 +4,12 @@ import * as React from "react";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as JsxRuntime from "react/jsx-runtime";
 
-var dafaultVal = {
+var defaultVal = {
   publishableKey: ""
 };
 
 var hyperProviderContext = React.createContext([
-      dafaultVal,
+      defaultVal,
       (function (param) {
           
         })
@@ -27,7 +27,7 @@ function HyperProvider(props) {
   var publishableKey = __publishableKey !== undefined ? __publishableKey : "";
   var customBackendUrl = __customBackendUrl !== undefined ? Caml_option.valFromOption(__customBackendUrl) : undefined;
   var match = React.useState(function () {
-        return dafaultVal;
+        return defaultVal;
       });
   var setState = match[1];
   React.useEffect((function () {
@@ -55,7 +55,7 @@ function HyperProvider(props) {
 var make$1 = HyperProvider;
 
 export {
-  dafaultVal ,
+  defaultVal ,
   hyperProviderContext ,
   Provider ,
   make$1 as make,

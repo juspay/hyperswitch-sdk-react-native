@@ -78,7 +78,7 @@ function initPaymentSession(requestObj, callback) {
 }
 
 function getCustomerSavedPaymentMethods(requestObj, callback) {
-  console.log("init payment Session Native module rn wrapper ");
+  console.log("getCustomerSavedPaymentMethods Native module rn wrapper ");
   hyperswitch_getCustomerSavedPaymentMethods(requestObj, callback);
 }
 
