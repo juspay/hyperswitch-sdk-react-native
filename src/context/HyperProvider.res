@@ -4,16 +4,16 @@ type retryObject = {
 }
 
 type hyperProviderData = {publishableKey: string, customBackendUrl?: string}
-let dafaultVal: hyperProviderData = {publishableKey: ""}
+let defaultVal: hyperProviderData = {publishableKey: ""}
 
-let hyperProviderContext = React.createContext((dafaultVal, (_: hyperProviderData) => ()))
+let hyperProviderContext = React.createContext((defaultVal, (_: hyperProviderData) => ()))
 
 module Provider = {
   let make = React.Context.provider(hyperProviderContext)
 }
 @react.component
 let make = (~children, ~publishableKey="", ~customBackendUrl=None) => {
-  let (state, setState) = React.useState(_ => dafaultVal)
+  let (state, setState) = React.useState(_ => defaultVal)
 
   React.useEffect1(() => {
     setState(_ => {publishableKey, ?customBackendUrl})

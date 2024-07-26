@@ -10,25 +10,30 @@ export default function PaymentScreen() {
   const [response, setResponse] = React.useState('');
 
   const fetchPaymentParams = async () => {
-    const response = await fetch(
-      Platform.OS == 'ios'
-        ? `http://localhost:4242/create-payment-intent`
-        : `http://10.0.2.2:4242/create-payment-intent`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items: [{ id: 'xl-tshirt' }] }),
+    try {
+      const response = await fetch(
+        Platform.OS == 'ios'
+          ? `http://localhost:4242/create-payment-intent`
+          : `http://10.0.2.2:4242/create-payment-intent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ items: [{ id: 'xl-tshirt' }] }),
+        }
+      );
+      const val = await response.json();
+      return val;
+    } catch (err) {
+      return {
+        error: err
       }
-    );
-    const val = await response.json();
-
-    return val;
+    }
   };
 
   const initializePaymentSheet = async () => {
-    const { clientSecret, customerId, ephemeralKey } =
+    const { clientSecret, customerId, ephemeralKey, error } =
       await fetchPaymentParams();
 
     console.log('clientSecret', clientSecret);

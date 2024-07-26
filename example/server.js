@@ -24,57 +24,13 @@ app.get('/config', (req, res) => {
 app.post('/create-payment-intent', async (req, res) => {
   try {
     const paymentIntent = await hyper.paymentIntents.create({
-      currency: 'USD',
       amount: 2999,
-      confirm: false,
-      capture_method: 'automatic',
-      authentication_type: 'no_three_ds',
-      customer_id: 'hyperswitch_sdk_demo_id',
-      description: 'Joseph First Crypto',
-      shipping: {
-        address: {
-          line1: '1467',
-          line2: 'Harrison Street',
-          line3: 'Harrison Street',
-          city: 'San Fransico',
-          state: 'California',
-          zip: '94122',
-          country: 'US',
-          first_name: 'joseph',
-          last_name: 'Doe',
-        },
-        phone: {
-          number: '8056594427',
-          country_code: '+91',
-        },
-      },
-      billing: {
-        address: {
-          line1: '1467',
-          line2: 'Harrison Street',
-          line3: 'Harrison Street',
-          city: 'San Fransico',
-          state: 'California',
-          zip: '94122',
-          country: 'US',
-          first_name: 'joseph',
-          last_name: 'Doe',
-        },
-        phone: {
-          number: '8056594427',
-          country_code: '+91',
-        },
-      },
-      metadata: {
-        order_details: {
-          product_name: 'Apple iphone 15',
-          quantity: 1,
-        },
-      },
-      business_country: 'US',
-      business_label: 'default',
+      currency: 'USD',
+      customer_id: 'shivam',
+      profile_id: 'pro_neyxCYTLoxgPBD2pQZYB',
     });
 
+    console.log("-- paymentIntent", paymentIntent);
     // Send publishable key and PaymentIntent details to client
     res.send({
       clientSecret: paymentIntent.client_secret,
