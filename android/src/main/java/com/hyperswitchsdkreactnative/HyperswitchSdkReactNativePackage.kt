@@ -11,6 +11,7 @@ import com.facebook.react.uimanager.ViewManager
 
 import io.hyperswitch.react.HyperHeadlessModule
 import java.util.ArrayList
+import com.hyperswitchsdkreactnative.react.GooglePayButtonManager
 
 class HyperswitchSdkReactNativeViewPackage : ReactPackage {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
