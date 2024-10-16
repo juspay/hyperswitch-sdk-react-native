@@ -118,13 +118,17 @@ const HeadlessScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Button
-        buttonText={'Init Session'}
-        disabled={showLoader}
-        callback={initialisePaymentSession}
-      />
-      <Text style={styles.text}>{response}</Text>
-      <ScrollView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollView}
+      >
+        <Button
+          buttonText={'Init Session'}
+          disabled={showLoader}
+          callback={initialisePaymentSession}
+        />
+        <Text style={styles.text}>Response : {response}</Text>
+
         <Text style={styles.text}>Load Customer Payment Data Using</Text>
         <Button
           loading={showLoader}
@@ -174,12 +178,11 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 24,
   },
-  wrapper: {
-    alignItems: 'center',
-    gap: 10,
+  scrollView: {
+    paddingBottom: 100,
   },
   text: {
     fontSize: 18,
-    paddingVertical: 10,
+    paddingVertical: 15,
   },
 });
