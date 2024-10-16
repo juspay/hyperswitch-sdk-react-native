@@ -4,11 +4,11 @@ const { resolve } = require('path');
 
 // Replace if using a different env file or config
 const env = require('dotenv').config({ path: './.env' });
-app.use(express.static(process.env.STATIC_DIR));
-app.get('/', (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + '/index.html');
-  res.sendFile(path);
-});
+// app.use(express.static(process.env.STATIC_DIR));
+// app.get('/', (req, res) => {
+//   const path = resolve(process.env.STATIC_DIR + '/index.html');
+//   res.sendFile(path);
+// });
 
 // replace the test api key with your hyperswitch api key
 const hyper = require('@juspay-tech/hyperswitch-node')(
@@ -26,7 +26,8 @@ app.post('/create-payment-intent', async (req, res) => {
     const paymentIntent = await hyper.paymentIntents.create({
       amount: 2999,
       currency: 'USD',
-      customer_id: 'John'
+      customer_id: 'John',
+      profile_id : process.env.HYPERSWITCH_PROFILE_ID
     });
 
     console.log("-- paymentIntent", paymentIntent);

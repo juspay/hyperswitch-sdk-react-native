@@ -1490,7 +1490,7 @@ SPEC CHECKSUMS:
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
   hermes-engine: 01d3e052018c2a13937aca1860fbedbccd4a41b7
-  hyperswitch-sdk-react-native: da270d0548ae536baf9c4a7f99dd0adf2e4b142b
+  hyperswitch-sdk-react-native: d632e14cf7070c69aadd73a648a4a8b87b2a5143
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
   RCTDeprecation: b03c35057846b685b3ccadc9bfe43e349989cdb2

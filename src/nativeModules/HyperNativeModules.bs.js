@@ -7,15 +7,13 @@ import * as ReactNative from "react-native";
 
 var hyperswitchDict = Belt_Option.getWithDefault(Belt_Option.flatMap(Js_dict.get(ReactNative.NativeModules, "HyperModule"), Js_json.decodeObject), {});
 
-console.log("hyperswitch dict------>", hyperswitchDict);
-
 function getJsonFunWithCallbackFromKey(key) {
   var json = Js_dict.get(hyperswitchDict, key);
   if (json !== undefined) {
     return json;
   } else {
     return function (param, param$1) {
-      console.log("flow here-");
+      
     };
   }
 }
@@ -73,17 +71,14 @@ var hyperswitch = {
 };
 
 function initPaymentSession(requestObj, callback) {
-  console.log("init payment Session Native module rn wrapper ");
   hyperswitch_initPaymentSession(requestObj, callback);
 }
 
 function getCustomerSavedPaymentMethods(requestObj, callback) {
-  console.log("getCustomerSavedPaymentMethods Native module rn wrapper ");
   hyperswitch_getCustomerSavedPaymentMethods(requestObj, callback);
 }
 
 function presentPaymentSheet(requestObj, callback) {
-  console.log("reaching here------", requestObj);
   hyperswitch_presentPaymentSheet(requestObj, callback);
 }
 
