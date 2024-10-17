@@ -11,6 +11,8 @@ import com.facebook.react.viewmanagers.HyperswitchSdkReactNativeViewManagerInter
 abstract class HyperswitchSdkReactNativeViewManagerSpec<T : View> : SimpleViewManager<T>(), HyperswitchSdkReactNativeViewManagerInterface<T> {
   private val mDelegate: ViewManagerDelegate<T>
 
+  abstract fun setColor(view: T?, value: String?)
+
   init {
     mDelegate = HyperswitchSdkReactNativeViewManagerDelegate(this)
   }

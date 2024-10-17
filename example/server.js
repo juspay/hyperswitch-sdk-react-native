@@ -15,7 +15,7 @@ const hyper = require('@juspay-tech/hyperswitch-node')(
   process.env.HYPERSWITCH_SECRET_KEY
 );
 
-app.get('/config', (req, res) => {
+app.get('/get-publishable-key', (req, res) => {
   res.send({
     publishableKey: process.env.HYPERSWITCH_PUBLISHABLE_KEY,
   });
@@ -30,12 +30,9 @@ app.post('/create-payment-intent', async (req, res) => {
       profile_id : process.env.HYPERSWITCH_PROFILE_ID
     });
 
-    console.log("-- paymentIntent", paymentIntent);
     // Send publishable key and PaymentIntent details to client
     res.send({
       clientSecret: paymentIntent.client_secret,
-      customerId: paymentIntent.ephemeral_key.customer_id,
-      ephemeralKey: paymentIntent.ephemeral_key.secret,
     });
   } catch (err) {
     return res.status(400).send({

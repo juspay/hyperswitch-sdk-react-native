@@ -274,7 +274,6 @@ class HyperModule: RCTEventEmitter {
             
             callBack([statusMap])
         }
-        
         paymentSessionHandler?.confirmWithCustomerPaymentToken(paymentToken: paymentToken, cvc: cvc, resultHandler: resultHandler)
     }
     

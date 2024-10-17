@@ -1199,7 +1199,7 @@ PODS:
     - React-logger (= 0.74.2)
     - React-perflogger (= 0.74.2)
     - React-utils (= 0.74.2)
-  - RNGestureHandler (2.19.0):
+  - RNGestureHandler (2.20.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1244,7 +1244,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (5.31.1):
+  - RNSentry (5.34.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1265,11 +1265,11 @@ PODS:
     - React-utils
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.36.0)
+    - Sentry/HybridSDK (= 8.37.0)
     - Yoga
   - RNSVG (13.14.1):
     - React-Core
-  - Sentry/HybridSDK (8.36.0)
+  - Sentry/HybridSDK (8.37.0)
   - SocketRocket (0.7.0)
   - SSZipArchive (2.2.3)
   - Yoga (0.0.0)
@@ -1542,12 +1542,12 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 56b642bf605ba5afa500d35790928fc1d51565ad
   React-utils: 4476b7fcbbd95cfd002f3e778616155241d86e31
   ReactCommon: ecad995f26e0d1e24061f60f4e5d74782f003f12
-  RNGestureHandler: 67e78f16895947f7e57ab91e75e914d3e9ef7239
+  RNGestureHandler: 28078232f2868d3dcb4d4b6c8ab8691700187664
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
-  RNSentry: 2c78e72aaa6e55d61ce60d98a62f01b666f76513
+  RNSentry: d04d6639186a2748d52f7b34b59dbc4a456dc4cc
   RNSVG: af3907ac5d4fa26a862b75a16d8f15bc74f2ceda
-  Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
+  Sentry: ee060c09b2f7ec1240e95c766ab44c04c7bdb052
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: ae3c32c514802d30f687a04a6a35b348506d411f

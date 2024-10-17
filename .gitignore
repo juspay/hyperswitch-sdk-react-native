@@ -80,3 +80,5 @@ android/keystores/debug.keystore
 lib/
 
 .env
+ios/generated
+android/generated

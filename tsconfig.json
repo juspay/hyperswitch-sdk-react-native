@@ -4,6 +4,7 @@
     "paths": {
       "hyperswitch-sdk-react-native": ["./src/index"]
     },
+    "noEmit": true,
     "allowJs": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

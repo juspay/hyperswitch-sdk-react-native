@@ -143,8 +143,6 @@ app.post('/create-payment', async (req, res) => {
     const paymentIntent = await hyper.paymentIntents.create({
       amount: 2999,
       currency: 'USD',
-      customer_id: 'shivam',
-      profile_id: 'pro_neyxCYTLoxgPBD2pQZYB',
     });
 
     console.log('-- paymentIntent', paymentIntent);
