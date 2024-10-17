@@ -2,7 +2,7 @@
 
 import * as Js_dict from "rescript/lib/es6/js_dict.js";
 import * as Js_json from "rescript/lib/es6/js_json.js";
-import * as Core__Option from "@rescript/core/src/Core__Option.bs.js";
+import * as Core__Option from "@rescript/core/src/Core__Option.mjs";
 
 function parseConfirmResponse(responseDict) {
   var message = Core__Option.getOr(Js_json.decodeString(Core__Option.getOr(Js_dict.get(responseDict, "message"), null)), "");

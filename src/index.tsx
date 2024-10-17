@@ -1,4 +1,4 @@
-import * as HyperProviderExports from './context/HyperProvider.bs';
+import * as HyperProviderExports from './context/HyperProvider.mjs';
 
 var HyperProvider = HyperProviderExports.make;
 

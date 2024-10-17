@@ -6,7 +6,7 @@
     "in-source": true
   },
   "bsc-flags": ["-open RescriptCore"],
-  "suffix": ".bs.js",
+  "suffix": ".mjs",
   "sources": [
     {
       "dir": "src",

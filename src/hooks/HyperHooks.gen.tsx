@@ -3,7 +3,7 @@
 /* eslint-disable */
 /* tslint:disable */
 
-import * as HyperHooksJS from './HyperHooks.bs.js';
+import * as HyperHooksJS from './HyperHooks.mjs';
 
 import type {headlessConfirmResponseType as HyperTypes_headlessConfirmResponseType} from '../../src/types/HyperTypes.gen';
 
