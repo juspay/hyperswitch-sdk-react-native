@@ -24,7 +24,7 @@ function useHyper() {
       from: "rn"
     };
     return new Promise((function (resolve, param) {
-                  var responseResolve = function (arg) {
+                  var responseResolve = function (param) {
                     resolve(hsSdkParams);
                   };
                   HyperNativeModules.initPaymentSession(hsSdkParams, responseResolve);

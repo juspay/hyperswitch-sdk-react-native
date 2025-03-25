@@ -3,6 +3,7 @@ import android.util.Log
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import android.webkit.WebSettings
@@ -34,14 +35,12 @@ class Utils {
       id: Int?,
       isHidden: Boolean? = false
     ) {
-
-//      reactInstanceManager!!.createReactContextInBackground()
+      Log.i("called", "2")
 
       context.runOnUiThread {
-
         val transaction = context.supportFragmentManager.beginTransaction()
         val userAgent = getUserAgent(context)
-
+        val ipAddress = getDeviceIPAddress(context)
         context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         if (message != "card" && message != "google_pay" && message != "paypal") {
           flags = context.window.attributes.flags
@@ -63,7 +62,8 @@ class Utils {
                   message,
                   context.packageName,
                   context.resources.configuration.locale.country,
-                  userAgent
+                  userAgent,
+                  ipAddress
                 )
               )
               //.setFabricEnabled(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
@@ -83,7 +83,8 @@ class Utils {
                   message,
                   context.packageName,
                   context.resources.configuration.locale.country,
-                  userAgent
+                  userAgent,
+                  ipAddress
                 )
               )
               //.setFabricEnabled(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
@@ -108,7 +109,8 @@ class Utils {
                 message,
                 context.packageName,
                 context.resources.configuration.locale.country,
-                userAgent
+                userAgent,
+                ipAddress
               )
             )
             //.setFabricEnabled(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
@@ -134,13 +136,14 @@ class Utils {
       // Run on UI thread if needed, although you are not manipulating UI here
       context.runOnUiThread {
         val userAgent = getUserAgent(context)
-
+        val ipAddress = getDeviceIPAddress(context)
         val launchOptions = getLaunchOptions(
           request,
           message,
           context.packageName,
           context.resources.configuration.locale.country,
-          userAgent
+          userAgent,
+          ipAddress
         )
 
         // Ensure the fragment is not added to the UI
@@ -186,7 +189,7 @@ class Utils {
     }
 
 
-    public fun getUserAgent(context: Context): String {
+    fun getUserAgent(context: Context): String {
       return try {
         WebSettings.getDefaultUserAgent(context)
       } catch (e: RuntimeException) {
@@ -206,23 +209,28 @@ class Utils {
       message: String,
       packageName: String,
       country: String,
-      userAgent: String
+      userAgent: String,
+      ipAddress : String
     ): Bundle {
       request.putString("type", message)
-
       val hyperParams = Bundle()
       Log.i("Package Name---->", packageName)
       hyperParams.putString("appId", packageName)
       hyperParams.putString("country", country)
       hyperParams.putString("user-agent", userAgent)
-
+      hyperParams.putString("ip", ipAddress)
+      hyperParams.putDouble("launchTime", getCurrentTime())
+      hyperParams.putString("sdkVersion", "")
+      hyperParams.putString("device_model", Build.MODEL)
+      hyperParams.putString("os_type", "android")
+      hyperParams.putString("os_version", Build.VERSION.RELEASE)
+      hyperParams.putString("deviceBrand", Build.BRAND)
       request.putBundle("hyperParams", hyperParams)
-
       val bundle = Bundle()
       bundle.putBundle("props", request)
       return bundle
     }
-    
+
     fun hideFragment(context: AppCompatActivity, reset: Boolean) {
       if (reactNativeFragmentSheet != null) {
         context.supportFragmentManager

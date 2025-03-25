@@ -50,9 +50,9 @@ let useHyper = (): useHyperReturnType => {
     }
 
     Js.Promise.make((~resolve: HyperTypes.sessionParams => unit, ~reject as _) => {
-      let responseResolve = arg => {
-        /* NOTE: discuss about the usage of `arg` from native 
-          (can be used to handle the failure cases). */ 
+      let responseResolve = _ => {
+        /* NOTE: discuss about the usage of `arg` from native
+          (can be used to handle the failure cases). */
         resolve(hsSdkParams)
       }
       HyperNativeModules.initPaymentSession(hsSdkParams->HyperTypes.parser, responseResolve)

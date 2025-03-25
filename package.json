@@ -1,6 +1,6 @@
 {
   "name": "hyperswitch-sdk-react-native",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Hyperswitch for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -84,7 +84,6 @@
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react-native-builder-bob": "^0.20.4",
-    "react-native-code-push": "^8.2.2",
     "release-it": "^15.0.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
@@ -102,7 +101,6 @@
     "@sentry/react-native": "^5.9.1",
     "react": "*",
     "react-native": "*",
-    "react-native-code-push": "^8.2.2",
     "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-svg": "^13.13.0"
   },

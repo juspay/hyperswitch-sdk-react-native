@@ -3,12 +3,12 @@ package com.hyperswitchsdkreactnative.react
 import android.annotation.TargetApi
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory
 import com.facebook.react.HyperPackageList
 import com.facebook.react.ReactDelegate
@@ -18,9 +18,7 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.common.LifecycleState
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
-import com.hyperswitchsdkreactnative.R
 import com.hyperswitchsdkreactnative.ReactNativeHyperswitchPackage
-import com.microsoft.codepush.react.CodePush
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,7 +57,6 @@ open class HyperswitchFragment : ReactFragment(),
   ): View? {
 
     val mReactRootView = ReactRootView(context)
-    CodePush.overrideAppVersion("1.2.0")
 
     val packages = HyperPackageList(activity?.application, context).packages
     packages.add(ReactNativeHyperswitchPackage())
@@ -70,8 +67,7 @@ open class HyperswitchFragment : ReactFragment(),
       .addPackages(packages)
       .setBundleAssetName("hyperswitch.bundle")
       .setJSMainModulePath("index")
-//      .setJSBundleFile("hyperswitch.bundle")
-      .setJSBundleFile(CodePush.getJSBundleFile("hyperswitch.bundle"))
+      .setJSBundleFile("assets://hyperswitch.bundle")
       .setJavaScriptExecutorFactory(HermesExecutorFactory())
       .setUseDeveloperSupport(false)
       .setInitialLifecycleState(LifecycleState.RESUMED)
@@ -82,10 +78,9 @@ open class HyperswitchFragment : ReactFragment(),
     if (this.arguments != null) {
       mainComponentName = this.requireArguments().getString("arg_component_name")
       launchOptions = this.requireArguments().getBundle("arg_launch_options")
+      Log.i("called", launchOptions.toString())
     }
     checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
-
-    CodePush.setReactInstanceHolder { mReactInstanceManager }
     mReactRootView.startReactApplication(mReactInstanceManager, mainComponentName, launchOptions)
 
     // originalSoftInputMode = activity?.window?.attributes?.softInputMode ?: WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE

@@ -5,12 +5,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainPackageConfig;
 import com.facebook.react.shell.MainReactPackage;
 import com.horcrux.svg.SvgPackage;
-//import com.hyperswitchkount.HyperswitchKountPackage;
-import com.microsoft.codepush.react.CodePush;
 import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
 import com.reactnativepagerview.PagerViewPackage;
 import com.swmansion.gesturehandler.RNGestureHandlerPackage;
@@ -65,10 +62,9 @@ public class HyperPackageList {
   }
 
   public ArrayList<ReactPackage> getPackages() {
-    return new ArrayList<>(Arrays.<ReactPackage>asList(
+    return new ArrayList<>(Arrays.asList(
       new MainReactPackage(mConfig),
 //      new RNSentryPackage(),
-      new CodePush("ZAmo7uOXuDhPzU1NKlOOwGHasre9bTOKqrLLu", getApplicationContext(), true),
       new RNGestureHandlerPackage(),
 //      new HyperswitchKountPackage(),
       new RNInAppBrowserPackage(),

@@ -17,7 +17,9 @@ let make = (~children, ~publishableKey="", ~customBackendUrl=None) => {
   let (state, setState) = React.useState(_ => defaultVal)
 
   React.useEffect1(() => {
-    setState(_ => {publishableKey, ?customBackendUrl})
+    if (publishableKey != "") {
+      setState(_ => {publishableKey, ?customBackendUrl})
+    }
     None
   }, [publishableKey])
 

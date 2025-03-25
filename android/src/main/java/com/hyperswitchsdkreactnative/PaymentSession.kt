@@ -6,26 +6,20 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory
 import com.facebook.react.HyperPackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
-import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.common.LifecycleState
-import com.hyperswitchsdkreactnative.BuildConfig
 import com.hyperswitchsdkreactnative.ReactNativeHyperswitchPackage
 import com.hyperswitchsdkreactnative.react.Utils
-import com.microsoft.codepush.react.CodePush
 import io.hyperswitch.payments.paymentlauncher.PaymentResult
-//import io.hyperswitch.paymentsheet.PaymentSheet
 import io.hyperswitch.paymentsheet.PaymentSheetResult
-//import io.hyperswitch.react.Utils
 import org.json.JSONObject
 
 class PaymentSession {
@@ -76,10 +70,10 @@ class PaymentSession {
 //        reactInstanceManager = application.reactNativeHost.reactInstanceManager
 
 //        val mReactRootView = ReactRootView(context)
-        CodePush.overrideAppVersion("1.2.0")
 
         val packages = HyperPackageList(activity?.application, activity).packages
         packages.add(ReactNativeHyperswitchPackage())
+        Log.i("called", "3")
 
         reactInstanceManager = ReactInstanceManager.builder()
           .setApplication(activity.application)
@@ -87,8 +81,7 @@ class PaymentSession {
           .addPackages(packages)
           .setBundleAssetName("hyperswitch.bundle")
           .setJSMainModulePath("index")
-//      .setJSBundleFile("hyperswitch.bundle")
-          .setJSBundleFile(CodePush.getJSBundleFile("hyperswitch.bundle"))
+          .setJSBundleFile("assets://hyperswitch.bundle")
           .setJavaScriptExecutorFactory(HermesExecutorFactory())
           .setUseDeveloperSupport(false)
           .setInitialLifecycleState(LifecycleState.RESUMED)
@@ -102,8 +95,6 @@ class PaymentSession {
 //        }
 //        checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
 
-        CodePush.setReactInstanceHolder { reactInstanceManager }
-//        mReactRootView.startReactApplication(mReactInstanceManager, mainComponentName, launchOptions)
       } catch (ex: RuntimeException) {
         throw RuntimeException(
           "Please remove \"android:name\" from application tag in AndroidManifest.xml", ex
@@ -196,7 +187,6 @@ class PaymentSession {
   }
 
   fun destroyInstance() {
-    println("my destroy called>>>>>>>>>>>>>>>>>>>>>")
     completion = null
   }
 
@@ -325,6 +315,10 @@ class PaymentSession {
       hyperParams.putString("ip", Utils.getDeviceIPAddress(activity.applicationContext))
       hyperParams.putDouble("launchTime", Utils.getCurrentTime())
       hyperParams.putString("sdkVersion", "")
+      hyperParams.putString("device_model", Build.MODEL)
+      hyperParams.putString("os_type", "android")
+      hyperParams.putString("os_version", Build.VERSION.RELEASE)
+      hyperParams.putString("deviceBrand", Build.BRAND)
       return hyperParams
     }
 

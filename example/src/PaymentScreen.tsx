@@ -26,13 +26,15 @@ const PaymentScreen = () => {
   const fetchPaymentSession = async () => {
     setLoading(true);
     try {
+      setError('');
       const key = await fetchPaymentParams();
-      const paymentSheetParamsResult = await initPaymentSession(key);
+      const paymentSheetParamsResult = await initPaymentSession({
+        clientSecret: key.clientSecret,
+      });
       setPaymentSheetParams(paymentSheetParamsResult);
     } catch (err) {
       setError('Failed to load Client Secret');
     }
-    setError('');
     setLoading(false);
   };
 
@@ -50,14 +52,14 @@ const PaymentScreen = () => {
           primaryButton: {
             colors: {
               light: {
-                background: '#3680ef',
-                componentBorder: 'white',
-                placeholderText: 'white',
+                background: 'green',
+                componentBorder: 'green',
+                placeholderText: 'yellow',
               },
               dark: {
-                background: '#3680ef',
-                componentBorder: 'white',
-                placeholderText: 'white',
+                background: 'green',
+                componentBorder: 'green',
+                placeholderText: 'yellow',
               },
             },
             shapes: {

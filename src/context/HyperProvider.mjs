@@ -34,12 +34,15 @@ function HyperProvider(props) {
       });
   var setState = match[1];
   React.useEffect((function () {
-          setState(function (param) {
-                return {
-                        publishableKey: publishableKey,
-                        customBackendUrl: customBackendUrl
-                      };
-              });
+          if (publishableKey !== "") {
+            setState(function (param) {
+                  return {
+                          publishableKey: publishableKey,
+                          customBackendUrl: customBackendUrl
+                        };
+                });
+          }
+          
         }), [publishableKey]);
   var setState$1 = React.useCallback((function (val) {
           setState(function (param) {
