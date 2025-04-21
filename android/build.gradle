@@ -1,3 +1,7 @@
+apply from: "dependency-handler.gradle"
+
+ext.hyperDependencies = initializeHyperswitchDependencies()
+
 buildscript {
   def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["HyperswitchSdkReactNative_kotlinVersion"]
 
@@ -98,18 +102,17 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.google.android.gms:play-services-wallet:19.2.1"
-  implementation project(':react-native-gesture-handler')
-  implementation project(':react-native-hyperswitch-kount')
-  implementation project(':react-native-inappbrowser-reborn')
-  implementation project(':react-native-pager-view')
-  implementation project(':react-native-safe-area-context')
-  implementation project(':react-native-screens')
-  implementation project(':react-native-svg')
-  implementation project(":react-native-klarna-inapp-sdk")
-  implementation 'org.greenrobot:eventbus:3.3.1'
+  // Core dependencies that should always be included
   implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
   implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
   implementation "androidx.activity:activity-ktx:1.6.1"
+  implementation 'org.greenrobot:eventbus:3.3.1'
+  // Hyperswitch dependencies which will be added dynamically
+  if (project.ext.has('hyperDependencies')) {
+      project.ext.hyperDependencies.each { dep ->
+          implementation project(":${dep}")
+      }
+  }
 }
 
 if (isNewArchitectureEnabled()) {

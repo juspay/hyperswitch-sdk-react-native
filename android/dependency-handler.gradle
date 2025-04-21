@@ -1,0 +1,290 @@
+println "Setting up Hyperswitch SDK dependencies"
+
+ext.WHITELISTED_PACKAGES = [
+    'react-native-hyperswitch-samsung-pay',
+    'react-native-reanimated',
+    'react-native-hyperswitch-paypal',
+    'react-native-hyperswitch-netcetera-3ds',
+    'react-native-hyperswitch-scancard',
+    'react-native-gesture-handler',
+    'react-native-hyperswitch-kount',
+    'react-native-inappbrowser-reborn',
+    'react-native-pager-view',
+    'react-native-safe-area-context',
+    'react-native-screens',
+    'react-native-svg',
+    'react-native-klarna-inapp-sdk'
+]
+
+// These packages will still be implemented as dependencies but not added to HyperPackageList.java
+ext.BLACKLISTED_PACKAGES = [
+    'react-native-klarna-inapp-sdk'
+]
+
+// Maps package name to its default import and package class if not found in autolinking
+ext.DEFAULT_PACKAGE_INFO = [
+    'react-native-gesture-handler': [
+        packageImport: "import com.swmansion.gesturehandler.RNGestureHandlerPackage;",
+        packageInstance: "new RNGestureHandlerPackage()"
+    ],
+    'react-native-hyperswitch-kount': [
+        packageImport: "import com.hyperswitchkount.HyperswitchKountPackage;",
+        packageInstance: "new HyperswitchKountPackage()"
+    ],
+    'react-native-inappbrowser-reborn': [
+        packageImport: "import com.proyecto26.inappbrowser.RNInAppBrowserPackage;",
+        packageInstance: "new RNInAppBrowserPackage()"
+    ],
+    'react-native-pager-view': [
+        packageImport: "import com.reactnativepagerview.PagerViewPackage;",
+        packageInstance: "new PagerViewPackage()"
+    ],
+    'react-native-safe-area-context': [
+        packageImport: "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
+        packageInstance: "new SafeAreaContextPackage()"
+    ],
+    'react-native-screens': [
+        packageImport: "import com.swmansion.rnscreens.RNScreensPackage;",
+        packageInstance: "new RNScreensPackage()"
+    ],
+    'react-native-svg': [
+        packageImport: "import com.horcrux.svg.SvgPackage;",
+        packageInstance: "new SvgPackage()"
+    ],
+    'react-native-klarna-inapp-sdk': [
+        packageImport: "import com.klarna.inapp.KlarnaInAppSdkPackage;",
+        packageInstance: "new KlarnaInAppSdkPackage()"
+    ],
+    'react-native-hyperswitch-samsung-pay': [
+        packageImport: "import com.hyperswitchsamsungpay.HyperswitchSamsungPayPackage;",
+        packageInstance: "new HyperswitchSamsungPayPackage()"
+    ],
+    'react-native-reanimated': [
+        packageImport: "import com.swmansion.reanimated.ReanimatedPackage;",
+        packageInstance: "new ReanimatedPackage()"
+    ],
+    'react-native-hyperswitch-paypal': [
+        packageImport: "import com.hyperswitchpaypal.HyperswitchPaypalPackage;",
+        packageInstance: "new HyperswitchPaypalPackage()"
+    ],
+    'react-native-hyperswitch-netcetera-3ds': [
+        packageImport: "import com.reactnativehyperswitchnetcetera3ds.HyperswitchNetcetera3dsPackage;",
+        packageInstance: "new HyperswitchNetcetera3dsPackage()"
+    ],
+    'react-native-hyperswitch-scancard': [
+        packageImport: "import com.reactnativehyperswitchscancard.HyperswitchScancardPackage;",
+        packageInstance: "new HyperswitchScancardPackage()"
+    ]
+]
+
+ext.findAutolinkingJson = { ->
+    def possiblePaths = [
+        // Common path in host application, we can add more paths if needed
+        new File(rootProject.projectDir, 'build/generated/autolinking')
+    ]
+    // there can be different paths for different react native versions.
+    for (File path : possiblePaths) {
+        def autolinkingFile = new File(path, 'autolinking.json')
+        if (autolinkingFile.exists()) {
+            println "Found autolinking.json at ${autolinkingFile.absolutePath}"
+            return autolinkingFile
+        }
+    }
+    
+    println "Warning: autolinking.json not found. Using default package configurations."
+    return null
+}
+
+ext.parseAutolinkingData = { autolinkingFile ->
+    def packageData = [:]
+    
+    if (autolinkingFile) {
+        try {
+            def json = new groovy.json.JsonSlurper().parse(autolinkingFile)
+            
+            json.dependencies.each { packageName, packageInfo ->
+                if (ext.WHITELISTED_PACKAGES.contains(packageName)) {
+                    def androidInfo = packageInfo.platforms?.android
+                    
+                    if (androidInfo) {
+                        def packageInstance = androidInfo.packageInstance
+                        def packageImportPath = androidInfo.packageImportPath
+                        
+                        if (packageImportPath && packageInstance) {
+                            def packageInstanceToUse = packageInstance
+                            
+                            packageData[packageName] = [
+                                packageImport: packageImportPath,
+                                packageInstance: packageInstanceToUse
+                            ]
+                            println "Added package from autolinking: ${packageName} -> ${packageInstanceToUse}"
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            println "Error parsing autolinking.json: ${e.message}"
+            e.printStackTrace()
+        }
+    }
+    
+    // Add default package info for whitelisted packages not in autolinking.json
+    ext.WHITELISTED_PACKAGES.each { packageName ->
+        if (!packageData.containsKey(packageName) && ext.DEFAULT_PACKAGE_INFO.containsKey(packageName)) {
+            packageData[packageName] = ext.DEFAULT_PACKAGE_INFO[packageName]
+            println "Using default configuration for: ${packageName}"
+        }
+    }
+    // println "packageData: ${packageData}"
+    // react-native-hyperswitch-scancard:[packageImport:import com.reactnativehyperswitchscancard.HyperswitchScancardPackage;, packageInstance:new HyperswitchScancardPackage()]
+    return packageData  
+}
+
+ext.detectAvailableDependencies = { packageData ->
+    def availableDeps = []
+    
+    def possibleNodeModulesPaths = [
+        // Common path in host application node_modules
+        new File(rootProject.projectDir, '../node_modules'),
+    ]
+    
+    def nodeModulesPaths = possibleNodeModulesPaths.findAll { it.exists() }
+    
+    if (nodeModulesPaths) {
+        packageData.keySet().each { dep ->
+            for (File nodeModulesDir : nodeModulesPaths) {
+                def depPath = new File(nodeModulesDir, dep)
+                def depAndroidPath = new File(depPath, 'android')
+                
+                if (depPath.exists() && depAndroidPath.exists()) {
+                    println "Found dependency: ${dep}"
+                    availableDeps.add(dep)
+                    break
+                }
+            }
+        }
+    }
+    
+    println "Available dependencies: ${availableDeps}"
+    return availableDeps
+}
+
+// Generate HyperPackageList.java with detected dependencies
+ext.generateHyperPackageList = { availableDeps, packageData ->
+    def hyperPackageListDir = new File(projectDir, "src/main/java/com/facebook/react")
+    hyperPackageListDir.mkdirs()
+    def hyperPackageListFile = new File(hyperPackageListDir, "HyperPackageList.java")
+    
+    println "Generating HyperPackageList.java with dependencies: ${availableDeps}"
+    
+    def imports = new StringBuilder()
+    imports.append("""
+package com.facebook.react;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.facebook.react.shell.MainPackageConfig;
+import com.facebook.react.shell.MainReactPackage;
+""")
+    
+    availableDeps.each { dep ->
+        if (packageData.containsKey(dep) && !ext.BLACKLISTED_PACKAGES.contains(dep)) {
+            imports.append(packageData[dep].packageImport).append("\n")
+        }
+    }
+    
+    imports.append("""
+import java.util.Arrays;
+import java.util.ArrayList;
+""")
+    
+    def packageInstances = new StringBuilder()
+    packageInstances.append("      new MainReactPackage(mConfig)")
+    
+    availableDeps.each { dep ->
+        if (packageData.containsKey(dep) && !ext.BLACKLISTED_PACKAGES.contains(dep)) {
+            def instance = packageData[dep].packageInstance
+            if (!instance.contains("new ")) {
+                packageInstances.append(",\n      new ").append(instance).append("()")
+            } else {
+                packageInstances.append(",\n      ").append(instance)
+            }
+        }
+    }
+    
+    def fileContent = """${imports}
+
+public class HyperPackageList {
+  private Application application;
+  private ReactNativeHost reactNativeHost;
+  private MainPackageConfig mConfig;
+  private Context mContext;
+
+  public HyperPackageList(ReactNativeHost reactNativeHost) {
+    this(reactNativeHost, null);
+  }
+
+  public HyperPackageList(Application application, Context context) {
+    this(application, null, context);
+  }
+
+  public HyperPackageList(ReactNativeHost reactNativeHost, MainPackageConfig config) {
+    this.reactNativeHost = reactNativeHost;
+    mConfig = config;
+  }
+
+  public HyperPackageList(Application application, MainPackageConfig config, Context context) {
+    this.reactNativeHost = null;
+    this.application = application;
+    mConfig = config;
+    mContext = context;
+  }
+
+  private ReactNativeHost getReactNativeHost() {
+    return this.reactNativeHost;
+  }
+
+  private Resources getResources() {
+    return this.getApplication().getResources();
+  }
+
+  private Application getApplication() {
+    if (this.reactNativeHost == null) return this.application;
+    return this.reactNativeHost.getApplication();
+  }
+
+  private Context getApplicationContext() {
+    return mContext;
+  }
+
+  public ArrayList<ReactPackage> getPackages() {
+    return new ArrayList<>(Arrays.asList(
+${packageInstances}
+    ));
+  }
+}
+"""
+    
+    hyperPackageListFile.text = fileContent
+    println "Successfully generated HyperPackageList.java"
+}
+
+ext.initializeHyperswitchDependencies = { ->
+    def autolinkingFile = ext.findAutolinkingJson()
+    def packageData = ext.parseAutolinkingData(autolinkingFile)
+    def availableDeps = ext.detectAvailableDependencies(packageData)
+    
+    availableDeps.each { dep ->
+        if (ext.BLACKLISTED_PACKAGES.contains(dep)) {
+            println "Note: ${dep} is implemented as a dependency but excluded from HyperPackageList.java due to blacklist"
+        }
+    }
+    
+    ext.generateHyperPackageList(availableDeps, packageData)
+    
+    return availableDeps
+    // println "Available dependencies: ${availableDeps}"
+    // Available dependencies: [react-native-gesture-handler, react-native-hyperswitch-kount, react-native-hyperswitch-netcetera-3ds, react-native-hyperswitch-scancard, react-native-inappbrowser-reborn, react-native-klarna-inapp-sdk, react-native-pager-view, react-native-safe-area-context, react-native-screens, react-native-svg]
+} 
