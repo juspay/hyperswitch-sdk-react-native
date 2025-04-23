@@ -1,18 +1,21 @@
 println "Setting up Hyperswitch SDK dependencies"
 
-ext.WHITELISTED_PACKAGES = [
+ext.MANDATORY_DEPENDENCIES = [
+    'react-native-gesture-handler',
+    'react-native-inappbrowser-reborn',
+    'react-native-pager-view',
+    'react-native-safe-area-context',
+    'react-native-screens',
+    'react-native-svg'
+]
+
+ext.OPTIONAL_DEPENDENCIES = [
     'react-native-hyperswitch-samsung-pay',
     'react-native-reanimated',
     'react-native-hyperswitch-paypal',
     'react-native-hyperswitch-netcetera-3ds',
     'react-native-hyperswitch-scancard',
-    'react-native-gesture-handler',
     'react-native-hyperswitch-kount',
-    'react-native-inappbrowser-reborn',
-    'react-native-pager-view',
-    'react-native-safe-area-context',
-    'react-native-screens',
-    'react-native-svg',
     'react-native-klarna-inapp-sdk'
 ]
 
@@ -21,152 +24,104 @@ ext.BLACKLISTED_PACKAGES = [
     'react-native-klarna-inapp-sdk'
 ]
 
-// Maps package name to its default import and package class if not found in autolinking
-ext.DEFAULT_PACKAGE_INFO = [
-    'react-native-gesture-handler': [
-        packageImport: "import com.swmansion.gesturehandler.RNGestureHandlerPackage;",
-        packageInstance: "new RNGestureHandlerPackage()"
-    ],
-    'react-native-hyperswitch-kount': [
-        packageImport: "import com.hyperswitchkount.HyperswitchKountPackage;",
-        packageInstance: "new HyperswitchKountPackage()"
-    ],
-    'react-native-inappbrowser-reborn': [
-        packageImport: "import com.proyecto26.inappbrowser.RNInAppBrowserPackage;",
-        packageInstance: "new RNInAppBrowserPackage()"
-    ],
-    'react-native-pager-view': [
-        packageImport: "import com.reactnativepagerview.PagerViewPackage;",
-        packageInstance: "new PagerViewPackage()"
-    ],
-    'react-native-safe-area-context': [
-        packageImport: "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
-        packageInstance: "new SafeAreaContextPackage()"
-    ],
-    'react-native-screens': [
-        packageImport: "import com.swmansion.rnscreens.RNScreensPackage;",
-        packageInstance: "new RNScreensPackage()"
-    ],
-    'react-native-svg': [
-        packageImport: "import com.horcrux.svg.SvgPackage;",
-        packageInstance: "new SvgPackage()"
-    ],
-    'react-native-klarna-inapp-sdk': [
-        packageImport: "import com.klarna.inapp.KlarnaInAppSdkPackage;",
-        packageInstance: "new KlarnaInAppSdkPackage()"
-    ],
-    'react-native-hyperswitch-samsung-pay': [
-        packageImport: "import com.hyperswitchsamsungpay.HyperswitchSamsungPayPackage;",
-        packageInstance: "new HyperswitchSamsungPayPackage()"
-    ],
-    'react-native-reanimated': [
-        packageImport: "import com.swmansion.reanimated.ReanimatedPackage;",
-        packageInstance: "new ReanimatedPackage()"
-    ],
-    'react-native-hyperswitch-paypal': [
-        packageImport: "import com.hyperswitchpaypal.HyperswitchPaypalPackage;",
-        packageInstance: "new HyperswitchPaypalPackage()"
-    ],
-    'react-native-hyperswitch-netcetera-3ds': [
-        packageImport: "import com.reactnativehyperswitchnetcetera3ds.HyperswitchNetcetera3dsPackage;",
-        packageInstance: "new HyperswitchNetcetera3dsPackage()"
-    ],
-    'react-native-hyperswitch-scancard': [
-        packageImport: "import com.reactnativehyperswitchscancard.HyperswitchScancardPackage;",
-        packageInstance: "new HyperswitchScancardPackage()"
-    ]
-]
-
-ext.findAutolinkingJson = { ->
-    def possiblePaths = [
-        // Common path in host application, we can add more paths if needed
-        new File(rootProject.projectDir, 'build/generated/autolinking')
-    ]
-    // there can be different paths for different react native versions.
-    for (File path : possiblePaths) {
-        def autolinkingFile = new File(path, 'autolinking.json')
-        if (autolinkingFile.exists()) {
-            println "Found autolinking.json at ${autolinkingFile.absolutePath}"
-            return autolinkingFile
+// Runs a specified command using Runtime exec() in a specified directory.
+// Throws when the command result is empty.
+ext.getCommandOutput = { command, directory ->
+    try {
+        def output = ""
+        def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
+        def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
+        def buff = ""
+        def readBuffer = new StringBuffer()
+        while ((buff = bufferedReader.readLine()) != null) {
+            readBuffer.append(buff)
         }
+        output = readBuffer.toString()
+        if (!output) {
+            println "Unexpected empty result of running command."
+            def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
+            def errBuff = ""
+            def readErrorBuffer = new StringBuffer()
+            while ((errBuff = bufferedErrorReader.readLine()) != null) {
+                readErrorBuffer.append(errBuff)
+            }
+            throw new Exception(readErrorBuffer.toString())
+        }
+        return output
+    } catch (Exception exception) {
+        println "Running command failed."
+        throw exception
     }
-    
-    println "Warning: autolinking.json not found. Using default package configurations."
-    return null
 }
 
-ext.parseAutolinkingData = { autolinkingFile ->
+// Get package info using React Native CLI
+ext.getReactNativeConfig = { ->
     def packageData = [:]
-    
-    if (autolinkingFile) {
-        try {
-            def json = new groovy.json.JsonSlurper().parse(autolinkingFile)
-            
-            json.dependencies.each { packageName, packageInfo ->
-                if (ext.WHITELISTED_PACKAGES.contains(packageName)) {
-                    def androidInfo = packageInfo.platforms?.android
-                    
-                    if (androidInfo) {
-                        def packageInstance = androidInfo.packageInstance
-                        def packageImportPath = androidInfo.packageImportPath
-                        
-                        if (packageImportPath && packageInstance) {
-                            def packageInstanceToUse = packageInstance
-                            
-                            packageData[packageName] = [
-                                packageImport: packageImportPath,
-                                packageInstance: packageInstanceToUse
-                            ]
-                            println "Added package from autolinking: ${packageName} -> ${packageInstanceToUse}"
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            println "Error parsing autolinking.json: ${e.message}"
-            e.printStackTrace()
-        }
-    }
-    
-    // Add default package info for whitelisted packages not in autolinking.json
-    ext.WHITELISTED_PACKAGES.each { packageName ->
-        if (!packageData.containsKey(packageName) && ext.DEFAULT_PACKAGE_INFO.containsKey(packageName)) {
-            packageData[packageName] = ext.DEFAULT_PACKAGE_INFO[packageName]
-            println "Using default configuration for: ${packageName}"
-        }
-    }
-    // println "packageData: ${packageData}"
-    // react-native-hyperswitch-scancard:[packageImport:import com.reactnativehyperswitchscancard.HyperswitchScancardPackage;, packageInstance:new HyperswitchScancardPackage()]
-    return packageData  
-}
-
-ext.detectAvailableDependencies = { packageData ->
+    def root = rootProject.projectDir
     def availableDeps = []
+    def missingMandatoryDeps = []
     
-    def possibleNodeModulesPaths = [
-        // Common path in host application node_modules
-        new File(rootProject.projectDir, '../node_modules'),
-    ]
+    // Resolve the CLI location from Gradle file
+    def cliResolveScript = "try {console.log(require('@react-native-community/cli').bin);} catch (e) {console.log(require('react-native/cli').bin);}"
+    String[] nodeCommand = ["node", "-e", cliResolveScript]
+    def cliPath
     
-    def nodeModulesPaths = possibleNodeModulesPaths.findAll { it.exists() }
+    try {
+        cliPath = ext.getCommandOutput(nodeCommand, root)
+        println "CLI path: ${cliPath}"
+    } catch (Exception e) {
+        println "Failed to resolve React Native CLI: ${e.message}"
+        return [packageData: packageData, availableDeps: availableDeps]
+    }
     
-    if (nodeModulesPaths) {
-        packageData.keySet().each { dep ->
-            for (File nodeModulesDir : nodeModulesPaths) {
-                def depPath = new File(nodeModulesDir, dep)
-                def depAndroidPath = new File(depPath, 'android')
-                
-                if (depPath.exists() && depAndroidPath.exists()) {
-                    println "Found dependency: ${dep}"
-                    availableDeps.add(dep)
-                    break
-                }
+    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
+    def reactNativeConfigOutput
+    
+    try {
+        reactNativeConfigOutput = ext.getCommandOutput(reactNativeConfigCommand, root)
+    } catch (Exception e) {
+        println "Failed to get React Native config: ${e.message}"
+        return [packageData: packageData, availableDeps: availableDeps]
+    }
+    
+    def json
+    try {
+        json = new groovy.json.JsonSlurper().parseText(reactNativeConfigOutput)
+    } catch (Exception e) {
+        println "Failed to parse React Native config output: ${e.message}"
+        return [packageData: packageData, availableDeps: availableDeps]
+    }
+    
+    def dependencies = json["dependencies"]
+    
+    // Process both mandatory and optional packages
+    (ext.MANDATORY_DEPENDENCIES + ext.OPTIONAL_DEPENDENCIES).each { packageName ->
+        if (dependencies.containsKey(packageName)) {
+            def platformsConfig = dependencies[packageName]["platforms"]
+            def androidConfig = platformsConfig["android"]
+            
+            if (androidConfig != null && androidConfig["sourceDir"] != null) {
+                packageData[packageName] = [
+                    packageImport: androidConfig["packageImportPath"],
+                    packageInstance: androidConfig["packageInstance"],
+                    isMandatory: ext.MANDATORY_DEPENDENCIES.contains(packageName)
+                ]
+                availableDeps.add(packageName)
+                println "Added package from React Native CLI: ${packageName} (${ext.MANDATORY_DEPENDENCIES.contains(packageName) ? 'mandatory' : 'optional'})"
             }
+        } else if (ext.MANDATORY_DEPENDENCIES.contains(packageName)) {
+            missingMandatoryDeps.add(packageName)
         }
+    }
+    
+    // Warn about missing mandatory dependencies
+    if (missingMandatoryDeps.size() > 0) {
+        println "WARNING: Missing mandatory dependencies: ${missingMandatoryDeps}"
+        println "These dependencies are required for the SDK to function properly."
     }
     
     println "Available dependencies: ${availableDeps}"
-    return availableDeps
+    return [packageData: packageData, availableDeps: availableDeps]
 }
 
 // Generate HyperPackageList.java with detected dependencies
@@ -272,9 +227,10 @@ ${packageInstances}
 }
 
 ext.initializeHyperswitchDependencies = { ->
-    def autolinkingFile = ext.findAutolinkingJson()
-    def packageData = ext.parseAutolinkingData(autolinkingFile)
-    def availableDeps = ext.detectAvailableDependencies(packageData)
+    // Get package data directly from React Native CLI
+    def result = ext.getReactNativeConfig()
+    def packageData = result.packageData
+    def availableDeps = result.availableDeps
     
     availableDeps.each { dep ->
         if (ext.BLACKLISTED_PACKAGES.contains(dep)) {
@@ -285,6 +241,4 @@ ext.initializeHyperswitchDependencies = { ->
     ext.generateHyperPackageList(availableDeps, packageData)
     
     return availableDeps
-    // println "Available dependencies: ${availableDeps}"
-    // Available dependencies: [react-native-gesture-handler, react-native-hyperswitch-kount, react-native-hyperswitch-netcetera-3ds, react-native-hyperswitch-scancard, react-native-inappbrowser-reborn, react-native-klarna-inapp-sdk, react-native-pager-view, react-native-safe-area-context, react-native-screens, react-native-svg]
-} 
+}
