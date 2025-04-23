@@ -1,0 +1,244 @@
+println "Setting up Hyperswitch SDK dependencies"
+
+ext.MANDATORY_DEPENDENCIES = [
+    'react-native-gesture-handler',
+    'react-native-inappbrowser-reborn',
+    'react-native-pager-view',
+    'react-native-safe-area-context',
+    'react-native-screens',
+    'react-native-svg'
+]
+
+ext.OPTIONAL_DEPENDENCIES = [
+    'react-native-hyperswitch-samsung-pay',
+    'react-native-reanimated',
+    'react-native-hyperswitch-paypal',
+    'react-native-hyperswitch-netcetera-3ds',
+    'react-native-hyperswitch-scancard',
+    'react-native-hyperswitch-kount',
+    'react-native-klarna-inapp-sdk'
+]
+
+// These packages will still be implemented as dependencies but not added to HyperPackageList.java
+ext.BLACKLISTED_PACKAGES = [
+    'react-native-klarna-inapp-sdk'
+]
+
+// Runs a specified command using Runtime exec() in a specified directory.
+// Throws when the command result is empty.
+ext.getCommandOutput = { command, directory ->
+    try {
+        def output = ""
+        def cmdProcess = Runtime.getRuntime().exec(command, null, directory)
+        def bufferedReader = new BufferedReader(new InputStreamReader(cmdProcess.getInputStream()))
+        def buff = ""
+        def readBuffer = new StringBuffer()
+        while ((buff = bufferedReader.readLine()) != null) {
+            readBuffer.append(buff)
+        }
+        output = readBuffer.toString()
+        if (!output) {
+            println "Unexpected empty result of running command."
+            def bufferedErrorReader = new BufferedReader(new InputStreamReader(cmdProcess.getErrorStream()))
+            def errBuff = ""
+            def readErrorBuffer = new StringBuffer()
+            while ((errBuff = bufferedErrorReader.readLine()) != null) {
+                readErrorBuffer.append(errBuff)
+            }
+            throw new Exception(readErrorBuffer.toString())
+        }
+        return output
+    } catch (Exception exception) {
+        println "Running command failed."
+        throw exception
+    }
+}
+
+// Get package info using React Native CLI
+ext.getReactNativeConfig = { ->
+    def packageData = [:]
+    def root = rootProject.projectDir
+    def availableDeps = []
+    def missingMandatoryDeps = []
+    
+    // Resolve the CLI location from Gradle file
+    def cliResolveScript = "try {console.log(require('@react-native-community/cli').bin);} catch (e) {console.log(require('react-native/cli').bin);}"
+    String[] nodeCommand = ["node", "-e", cliResolveScript]
+    def cliPath
+    
+    try {
+        cliPath = ext.getCommandOutput(nodeCommand, root)
+        println "CLI path: ${cliPath}"
+    } catch (Exception e) {
+        println "Failed to resolve React Native CLI: ${e.message}"
+        return [packageData: packageData, availableDeps: availableDeps]
+    }
+    
+    String[] reactNativeConfigCommand = ["node", cliPath, "config"]
+    def reactNativeConfigOutput
+    
+    try {
+        reactNativeConfigOutput = ext.getCommandOutput(reactNativeConfigCommand, root)
+    } catch (Exception e) {
+        println "Failed to get React Native config: ${e.message}"
+        return [packageData: packageData, availableDeps: availableDeps]
+    }
+    
+    def json
+    try {
+        json = new groovy.json.JsonSlurper().parseText(reactNativeConfigOutput)
+    } catch (Exception e) {
+        println "Failed to parse React Native config output: ${e.message}"
+        return [packageData: packageData, availableDeps: availableDeps]
+    }
+    
+    def dependencies = json["dependencies"]
+    
+    // Process both mandatory and optional packages
+    (ext.MANDATORY_DEPENDENCIES + ext.OPTIONAL_DEPENDENCIES).each { packageName ->
+        if (dependencies.containsKey(packageName)) {
+            def platformsConfig = dependencies[packageName]["platforms"]
+            def androidConfig = platformsConfig["android"]
+            
+            if (androidConfig != null && androidConfig["sourceDir"] != null) {
+                packageData[packageName] = [
+                    packageImport: androidConfig["packageImportPath"],
+                    packageInstance: androidConfig["packageInstance"],
+                    isMandatory: ext.MANDATORY_DEPENDENCIES.contains(packageName)
+                ]
+                availableDeps.add(packageName)
+                println "Added package from React Native CLI: ${packageName} (${ext.MANDATORY_DEPENDENCIES.contains(packageName) ? 'mandatory' : 'optional'})"
+            }
+        } else if (ext.MANDATORY_DEPENDENCIES.contains(packageName)) {
+            missingMandatoryDeps.add(packageName)
+        }
+    }
+    
+    // Warn about missing mandatory dependencies
+    if (missingMandatoryDeps.size() > 0) {
+        println "WARNING: Missing mandatory dependencies: ${missingMandatoryDeps}"
+        println "These dependencies are required for the SDK to function properly."
+    }
+    
+    println "Available dependencies: ${availableDeps}"
+    return [packageData: packageData, availableDeps: availableDeps]
+}
+
+// Generate HyperPackageList.java with detected dependencies
+ext.generateHyperPackageList = { availableDeps, packageData ->
+    def hyperPackageListDir = new File(projectDir, "src/main/java/com/facebook/react")
+    hyperPackageListDir.mkdirs()
+    def hyperPackageListFile = new File(hyperPackageListDir, "HyperPackageList.java")
+    
+    println "Generating HyperPackageList.java with dependencies: ${availableDeps}"
+    
+    def imports = new StringBuilder()
+    imports.append("""
+package com.facebook.react;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.facebook.react.shell.MainPackageConfig;
+import com.facebook.react.shell.MainReactPackage;
+""")
+    
+    availableDeps.each { dep ->
+        if (packageData.containsKey(dep) && !ext.BLACKLISTED_PACKAGES.contains(dep)) {
+            imports.append(packageData[dep].packageImport).append("\n")
+        }
+    }
+    
+    imports.append("""
+import java.util.Arrays;
+import java.util.ArrayList;
+""")
+    
+    def packageInstances = new StringBuilder()
+    packageInstances.append("      new MainReactPackage(mConfig)")
+    
+    availableDeps.each { dep ->
+        if (packageData.containsKey(dep) && !ext.BLACKLISTED_PACKAGES.contains(dep)) {
+            def instance = packageData[dep].packageInstance
+            if (!instance.contains("new ")) {
+                packageInstances.append(",\n      new ").append(instance).append("()")
+            } else {
+                packageInstances.append(",\n      ").append(instance)
+            }
+        }
+    }
+    
+    def fileContent = """${imports}
+
+public class HyperPackageList {
+  private Application application;
+  private ReactNativeHost reactNativeHost;
+  private MainPackageConfig mConfig;
+  private Context mContext;
+
+  public HyperPackageList(ReactNativeHost reactNativeHost) {
+    this(reactNativeHost, null);
+  }
+
+  public HyperPackageList(Application application, Context context) {
+    this(application, null, context);
+  }
+
+  public HyperPackageList(ReactNativeHost reactNativeHost, MainPackageConfig config) {
+    this.reactNativeHost = reactNativeHost;
+    mConfig = config;
+  }
+
+  public HyperPackageList(Application application, MainPackageConfig config, Context context) {
+    this.reactNativeHost = null;
+    this.application = application;
+    mConfig = config;
+    mContext = context;
+  }
+
+  private ReactNativeHost getReactNativeHost() {
+    return this.reactNativeHost;
+  }
+
+  private Resources getResources() {
+    return this.getApplication().getResources();
+  }
+
+  private Application getApplication() {
+    if (this.reactNativeHost == null) return this.application;
+    return this.reactNativeHost.getApplication();
+  }
+
+  private Context getApplicationContext() {
+    return mContext;
+  }
+
+  public ArrayList<ReactPackage> getPackages() {
+    return new ArrayList<>(Arrays.asList(
+${packageInstances}
+    ));
+  }
+}
+"""
+    
+    hyperPackageListFile.text = fileContent
+    println "Successfully generated HyperPackageList.java"
+}
+
+ext.initializeHyperswitchDependencies = { ->
+    // Get package data directly from React Native CLI
+    def result = ext.getReactNativeConfig()
+    def packageData = result.packageData
+    def availableDeps = result.availableDeps
+    
+    availableDeps.each { dep ->
+        if (ext.BLACKLISTED_PACKAGES.contains(dep)) {
+            println "Note: ${dep} is implemented as a dependency but excluded from HyperPackageList.java due to blacklist"
+        }
+    }
+    
+    ext.generateHyperPackageList(availableDeps, packageData)
+    
+    return availableDeps
+}
